@@ -13,27 +13,27 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+import { Button } from "../../components/ui/button";
+import { Label } from "../../components/ui/label";
+import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
 
-export const JoinBoardDrawer = () => {
+export const CreateBoardDrawer = () => {
   const [open, setOpen] = React.useState(false);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button>Join Existing</Button>
+        <Button>Create New</Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Join to an existing task board</DrawerTitle>
+          <DrawerTitle>Create a new task board</DrawerTitle>
           <DrawerDescription>
-            Use the link of the board to join. You may leave the password empty if the board is public.
+            Give it a name and share your tasks with others!
           </DrawerDescription>
         </DrawerHeader>
-        <JoinBoardForm className="px-4" />
+        <CreateBoardForm className="px-4" />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -44,18 +44,22 @@ export const JoinBoardDrawer = () => {
   );
 };
 
-const JoinBoardForm = ({ className }: React.ComponentProps<"form">) => {
+const CreateBoardForm = ({ className }: React.ComponentProps<"form">) => {
   return (
     <form className={cn("grid items-start gap-4", className)}>
       <div className="grid gap-2">
-        <Label htmlFor="boardName">Board link</Label>
-        <Input id="boardName" placeholder="your.task/example" />
+        <Label htmlFor="boardName">Board name</Label>
+        <Input id="boardName" defaultValue="your.task" />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="username">Your usename in this board</Label>
+        <Input id="username" defaultValue="crazy balalaika!" autoComplete="off" />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
         <Input type="password" id="password" autoComplete="off" />
       </div>
-      <Button type="submit">Join 🚀</Button>
+      <Button type="submit">Create 🚀</Button>
     </form>
   );
 };
