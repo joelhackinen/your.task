@@ -3,7 +3,6 @@ import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { seed } from "drizzle-seed";
 import { boards, cards, tasks } from "./schema";
 
-
 const createLocalDbClient = async () => {
   const url = process.env.LOCAL_POSTGRES_URL!;
 
@@ -16,6 +15,7 @@ const createLocalDbClient = async () => {
     await migrate(devDb, { migrationsFolder: "migrations" });
   } catch (error) {
     console.error("❌ Migration failed\n\n", error);
+    console.dir(error)
     process.exit(1);
   }
   console.log("✅ Migration done");
@@ -35,6 +35,7 @@ const createLocalDbClient = async () => {
       },
     }));
   } catch (e) {
+    console.dir(e);
     console.log("skipping seeding");
   }
   

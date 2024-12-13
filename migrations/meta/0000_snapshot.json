@@ -1,5 +1,5 @@
 {
-  "id": "8b87787e-3447-402f-b3fa-d24e876b5a50",
+  "id": "cb276f70-1006-44c9-8c6c-4ebeabc1fd45",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -41,13 +41,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
         "board_id": {
           "name": "board_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -114,13 +114,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
         "card_id": {
           "name": "card_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },

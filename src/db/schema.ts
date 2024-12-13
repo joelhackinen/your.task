@@ -1,16 +1,17 @@
 import { pgTable, uniqueIndex } from "drizzle-orm/pg-core";
 
 export const boards = pgTable("boards", (t) => ({
-  id: t.serial().primaryKey(),
+  id: t.uuid().primaryKey(),
   name: t.text().notNull(),
   passwordHash: t.text(),
 }));
 
-export type BoardType = typeof boards.$inferSelect;
+export type SelectBoard = typeof boards.$inferSelect;
+export type InsertBoard = typeof boards.$inferInsert;
 
 export const cards = pgTable("cards", (t) => ({
-  id: t.serial().primaryKey(),
-  boardId: t.integer().notNull().references(() => boards.id, { onDelete: "cascade", onUpdate: "cascade" }),
+  id: t.uuid().primaryKey(),
+  boardId: t.uuid().notNull().references(() => boards.id, { onDelete: "cascade", onUpdate: "cascade" }),
   name: t.text().notNull(),
   description: t.text(),
 }), (t) => [
@@ -20,8 +21,8 @@ export const cards = pgTable("cards", (t) => ({
 export type CardType = typeof cards.$inferSelect;
 
 export const tasks = pgTable("tasks", (t) => ({
-  id: t.serial().primaryKey(),
-  cardId: t.integer().references(() => cards.id, { onDelete: "cascade", onUpdate: "cascade" }),
+  id: t.uuid().primaryKey(),
+  cardId: t.uuid().references(() => cards.id, { onDelete: "cascade", onUpdate: "cascade" }),
   title: t.text().notNull(),
   description: t.text(),
 }));

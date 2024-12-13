@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react";
+import { useState, useActionState } from "react";
 
 import {
   Drawer,
@@ -17,9 +17,10 @@ import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/lib/utils";
+import { createBoardAction } from "./actions";
 
 export const CreateBoardDrawer = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
@@ -36,7 +37,7 @@ export const CreateBoardDrawer = () => {
         <CreateBoardForm className="px-4" />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button className="w-36" variant="outline">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -44,22 +45,26 @@ export const CreateBoardDrawer = () => {
   );
 };
 
+
 const CreateBoardForm = ({ className }: React.ComponentProps<"form">) => {
+  const [_message, createBoard, pending] = useActionState(createBoardAction, "");
   return (
-    <form className={cn("grid items-start gap-4", className)}>
+    <form
+      action={createBoard}
+      className={cn("grid items-start gap-4", className)}
+    >
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
-        <Input id="boardName" defaultValue="your.task" />
-      </div>
-      <div className="grid gap-2">
-        <Label htmlFor="username">Your usename in this board</Label>
-        <Input id="username" defaultValue="crazy balalaika!" autoComplete="off" />
+        <Input name="name" id="boardName" defaultValue="your.task" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
-        <Input type="password" id="password" autoComplete="off" />
+        <Input name="password" type="password" id="password" autoComplete="off" />
       </div>
-      <Button type="submit">Create 🚀</Button>
+      <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
+        <span className={cn("[grid-area:stack]", pending && "invisible")}>Create🚀</span>
+        <span className={cn("[grid-area:stack]", !pending && "invisible")}>Creating a board...</span>
+      </Button>
     </form>
   );
 };
