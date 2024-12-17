@@ -48,25 +48,17 @@ export const CreateBoardDrawer = () => {
   );
 };
 
-type InitialState = {
-  status: "initial",
-}
 
-type ErrorState = {
-  status: "error";
-  errorType: string;
-  message: string;
+export type CreateBoardActionState = {
+  errors?: {
+    name?: string[],
+    password?: string[],
+  },
+  message?: string,
 };
-
-type SuccessState = {
-  status: "success";
-  message: string;
-};
-
-export type CreateBoardActionState = InitialState | ErrorState | SuccessState;
 
 const initialState = {
-  status: "initial",
+  message: "",
 } as const;
 
 interface CreateBoardFormProps extends ComponentProps<"form"> {
@@ -81,25 +73,13 @@ const CreateBoardForm = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    switch (state.status) {
-      case "initial":
-        return;
-      case "error":
-        toast({
-          variant: "destructive",
-          title: "Error Happened",
-          description: state.message,
-        });
-        return;
-      case "success":
-        toast({
-          title: "Board Created",
-          description: state.message
-        });
-        drawerRef.current.click();
-        return;
+    if (state.message) {
+      toast({
+        title: state.message,
+      });
+      drawerRef.current.click();
     }
-  }, [state, pending, toast, drawerRef]);
+  }, [state, toast]);
 
   return (
     <form
@@ -108,11 +88,17 @@ const CreateBoardForm = ({
     >
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
-        <Input name="name" id="boardName" defaultValue="your.task" autoComplete="off" />
+        <Input name="name" id="boardName" placeholder="your.task" autoComplete="off" />
+        {state?.errors?.name &&
+          <p className="text-red-500 text-sm">{state.errors.name}</p>
+        }
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
         <Input name="password" type="password" id="password" autoComplete="off" />
+        {state?.errors?.password &&
+          <p className="text-red-500 text-sm">{state.errors.password}</p>
+        }
       </div>
       <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
         <span className={cn("[grid-area:stack]", pending && "invisible")}>Create🚀</span>

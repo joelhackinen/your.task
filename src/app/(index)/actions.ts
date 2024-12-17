@@ -2,34 +2,32 @@
 
 import { db } from "@/db";
 import { boards } from "@/db/schema";
+import * as bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import bcrypt from "bcrypt";
 import type { CreateBoardActionState } from "./create-board-drawer";
+import { CreateBoardFormSchema } from "../../lib/definitions";
+import { sleep } from "@/lib/utils";
 
 export const createBoardAction = async (_previousState: CreateBoardActionState, formData: FormData): Promise<CreateBoardActionState> => {
-  const name = formData.get("name") as string;
-  const password = formData.get("password") as string;
-  await delay(2000);
+  await sleep(2000);
+  const validationResult = CreateBoardFormSchema.safeParse({
+    name: formData.get("name"),
+    password: formData.get("password"),
+  });
 
-  let passwordHash: string;
-  try {
-    passwordHash = await bcrypt.hash(password, 10);
-  } catch (err) {
-    if (err instanceof Error) {
-      return { status: "error", errorType: "HASHING_ERROR", message: err.message };
+  if (!validationResult.success) {
+    return {
+      errors: validationResult.error.flatten().fieldErrors,
     }
-    return { status: "error", errorType: "UNKNOWN_ERROR", message: "Error happened" };
   }
+  const { name, password } = validationResult.data;
 
-  try {
-    await db.insert(boards).values({ id: uuid(), name, passwordHash });
-  } catch (err) {
-    if (err instanceof Error)
-      return { status: "error", errorType: "DB_ERROR", message: err.message };
-    return { status: "error", errorType: "UNKNOWN_ERROR", message: "Error happened" };
-  }
+  let passwordHash = await bcrypt.hash(password, 10);
+  await db.insert(boards).values({
+    id: uuid(),
+    name,
+    passwordHash
+  });
 
-  return { status: "success", message: `Board ${name} created!` };
+  return { message: `Board ${name} created!` };
 };
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
