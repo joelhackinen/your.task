@@ -87,7 +87,7 @@ const CreateBoardForm = ({
     >
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
-        <Input name="name" id="boardName" placeholder="your.task" autoComplete="off" />
+        <Input name="name" id="boardName" placeholder="your.task" defaultValue={state?.data?.name as string} autoComplete="off" />
         {state?.errors?.name &&
           <p className="text-red-500 text-sm">{state.errors.name}</p>
         }
