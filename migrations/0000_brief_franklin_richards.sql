@@ -21,12 +21,14 @@ CREATE TABLE "tasks" (
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"username" text NOT NULL,
-	"password_hash" text NOT NULL
+	"password_hash" text NOT NULL,
+	CONSTRAINT "users_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 CREATE TABLE "users_boards" (
 	"user_id" uuid NOT NULL,
 	"board_id" uuid NOT NULL,
+	"board_name" text NOT NULL,
 	CONSTRAINT "users_boards_user_id_board_id_pk" PRIMARY KEY("user_id","board_id")
 );
 --> statement-breakpoint

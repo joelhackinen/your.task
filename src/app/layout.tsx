@@ -29,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main>{children}</main>
+        <main className="pt-10 font-[family-name:var(--font-geist-sans)]">
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

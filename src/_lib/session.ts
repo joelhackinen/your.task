@@ -1,9 +1,9 @@
 import "server-only"
-import { SignJWT, jwtVerify, generateSecret, type JWTPayload } from "jose";
+import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const key = await generateSecret("HS256");
+const key = new TextEncoder().encode("asd");
 
 const cookieOptions = {
   name: "session",
@@ -22,10 +22,10 @@ export const encrypt = async (payload: JWTPayload) => {
 export const decrypt = async (token: string) => {
   try {
     const { payload } = await jwtVerify(token, key, {
-      algorithms: ["HS256"]
+      algorithms: ["HS256"],
     });
     return payload;
-  } catch (_err) {
+  } catch (err) {
     return null;
   }
 };
@@ -39,16 +39,19 @@ export const createSession = async (userId: string) => {
 
 export const verifySession = async () => {
   const cookie = (await cookies()).get(cookieOptions.name)?.value;
-
-  if (!cookie) return redirect("/join");
+  
+  if (!cookie) return;
 
   const payload = await decrypt(cookie);
-  if (!payload?.sub) return redirect("/join");
+
+  if (!payload?.sub) return;
 
   return { userId: payload.sub };
 };
 
-export const deleteSession = async () => {
+export const deleteSession = async (redirectUrl?: string) => {
   (await cookies()).delete(cookieOptions.name);
-  redirect("/");
+  if (redirectUrl) {
+    redirect(redirectUrl);
+  }
 };

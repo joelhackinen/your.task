@@ -11,6 +11,7 @@ export type InsertUser = typeof users.$inferInsert;
 export const usersBoards = pgTable("users_boards", (t) => ({
   userId: t.uuid().notNull(),
   boardId: t.uuid().notNull(),
+  boardName: t.text().notNull().references(() => boards.name, { onDelete: "cascade", onUpdate: "cascade" }),
 }), (t) => [
   primaryKey({ columns: [t.userId, t.boardId ]}),
 ]);

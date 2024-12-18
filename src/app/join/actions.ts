@@ -1,14 +1,15 @@
 "use server"
 
 import * as bcrypt from "bcrypt";
-import { sleep } from "@/lib/utils";
-import { LoginFormSchema, SignUpFormSchema } from "../../lib/definitions";
+import { sleep } from "@/_lib/utils";
+import { LoginFormSchema, SignUpFormSchema } from "../../_lib/definitions";
 import type { SignUpActionState } from "./signup-form"
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import postgres from "postgres";
 import type { LoginActionState } from "./login-form";
-import { createSession } from "../../lib/session";
+import { createSession } from "../../_lib/session";
+import { eq } from "drizzle-orm";
 
 export const signUpAction = async (_previousState: SignUpActionState, formData: FormData): Promise<SignUpActionState> => {
   await sleep(1000);
@@ -74,6 +75,24 @@ export const loginAction = async (_previousState: SignUpActionState, formData: F
       errors: validationResult.error.flatten().fieldErrors,
     }
   }
-  const { username, } = validationResult.data;
+
+  const { username, password } = validationResult.data;
+
+  const userData = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username));
+  
+  const user = userData[0];
+
+  if (!user || (await bcrypt.compare(user.passwordHash, password))) {
+    return {
+      data,
+      message: "Invalid credentials",
+    };
+  }
+
+  await createSession(user.id);
+
   return { message: "hello," + username };
 };

@@ -1,5 +1,5 @@
 {
-  "id": "6be4767a-d9f6-4b13-9f3d-bfd77bda7158",
+  "id": "cb9467ee-9ce0-4e15-a540-163d0ed2a0d4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -187,7 +187,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -205,6 +213,12 @@
         "board_id": {
           "name": "board_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "board_name": {
+          "name": "board_name",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }

@@ -16,7 +16,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/_lib/utils";
 
 export const JoinBoardDrawer = () => {
   const [open, setOpen] = React.useState(false);

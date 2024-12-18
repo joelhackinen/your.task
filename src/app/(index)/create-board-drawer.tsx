@@ -16,7 +16,7 @@ import {
 import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
-import { cn } from "@/lib/utils";
+import { cn } from "@/_lib/utils";
 import { createBoardAction } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 
@@ -48,18 +48,17 @@ export const CreateBoardDrawer = () => {
   );
 };
 
-
 export type CreateBoardActionState = {
+  data?: {
+    name: FormDataEntryValue,
+    password: FormDataEntryValue,
+  },
   errors?: {
     name?: string[],
     password?: string[],
   },
   message?: string,
 };
-
-const initialState = {
-  message: "",
-} as const;
 
 interface CreateBoardFormProps extends ComponentProps<"form"> {
   drawerRef: RefObject<HTMLButtonElement>
@@ -69,7 +68,7 @@ const CreateBoardForm = ({
   className,
   drawerRef,
 }: CreateBoardFormProps) => {
-  const [state, createBoard, pending] = useActionState(createBoardAction, initialState);
+  const [state, createBoard, pending] = useActionState(createBoardAction, {});
   const { toast } = useToast();
 
   useEffect(() => {
