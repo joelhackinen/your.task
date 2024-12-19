@@ -8,9 +8,10 @@ import type { CreateBoardActionState } from "./create-board-drawer";
 import { CreateBoardFormSchema } from "../../_lib/definitions";
 import { sleep } from "@/_lib/utils";
 import { getUser } from "@/_data/user";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { eq } from "drizzle-orm";
 import type { JoinBoardActionState } from "./join-board-drawer";
+import postgres from "postgres";
 
 export const createBoardAction = async (_previousState: CreateBoardActionState, formData: FormData): Promise<CreateBoardActionState> => {
   await sleep(2000);
@@ -52,7 +53,8 @@ export const createBoardAction = async (_previousState: CreateBoardActionState, 
     boardId,
     boardName: name,
   });
-  revalidatePath("/");
+
+  revalidateTag("boards");
 
   return { message: `Board ${name} created!` };
 };
@@ -107,11 +109,30 @@ export const joinBoardAction = async (_previousState: JoinBoardActionState, form
     };
   }
   // handle duplicate composite pkey
-  await db
-    .insert(usersBoards)
-    .values({ userId: user.id, boardId: board.id, boardName: board.name });
+  try {
+    await db
+      .insert(usersBoards)
+      .values({ userId: user.id, boardId: board.id, boardName: board.name });
+  } catch (err) {
+    if (err instanceof postgres.PostgresError && err.code === "23505") {
+      return {
+        data: boardData,
+        errors: {
+          name: ["You already have this board"],
+        },
+      };
+    }
+    return {
+      data: boardData,
+      errors: {
+        name: ["Error creating a board"],
+        password: ["Error creating a board"],
+      },
+    };
+  }
 
-  revalidatePath("/");
+  revalidateTag("boards");
+
 
   return { message: `Joined ${name} succesfully!` };
 };

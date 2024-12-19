@@ -2,7 +2,7 @@ import { Suspense, use } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateBoardDrawer } from "@/app/(index)/create-board-drawer";
 import { JoinBoardDrawer } from "@/app/(index)/join-board-drawer";
-import { getUser } from "@/_data/user";
+import { getBoards, getUser } from "@/_data/user";
 import { db } from "@/db";
 import { usersBoards } from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -11,6 +11,7 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/ui/signout-button";
 import { deleteSession } from "@/_lib/session";
 import { sleep } from "@/_lib/utils";
+import { unstable_cache } from "next/cache";
 
 
 export default () => {
@@ -75,10 +76,7 @@ const UserInfo = ({
 
   if (!user) return null;
 
-  const boardsPromise = db
-    .select({ boardId: usersBoards.boardId, boardName: usersBoards.boardName })
-    .from(usersBoards)
-    .where(eq(usersBoards.userId, user.id));
+  const boardsPromise = getBoards(user.id);
 
   return (
     <div>

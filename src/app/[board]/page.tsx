@@ -1,27 +1,27 @@
 import * as React from "react";
 
 import { Cards } from "./cards";
-import { getBoardAction, getCardsAction } from "./actions";
+import { getBoard, getUser, } from "@/_data/user";
+import { redirect } from "next/navigation";
 
 
-const BoardPage = async ({
+export default async ({
   params,
 }: {
   params: Promise<{ board: string}>,
 }) => {
+  const user = await getUser();
+  if (!user) return redirect("/join");
   const boardId = (await params).board;
-  console.log(boardId)
-  const board = await getBoardAction(Number(boardId));
-  const cards = getCardsAction(Number(boardId));
+  const board = await getBoard(user.id, boardId);
+  if (!board) return redirect("/");
 
   return (
     <main className="h-dvh">
-      <h1>{board?.name}</h1>
+      <h1>{board.boardName}</h1>
       <React.Suspense fallback={(<div>Loading cards...</div>)}>
         <Cards cardsPromise={cards} />
       </React.Suspense>
     </main>
   );
 };
-
-export default BoardPage;
