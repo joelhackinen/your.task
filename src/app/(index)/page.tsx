@@ -3,15 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { CreateBoardDrawer } from "@/app/(index)/create-board-drawer";
 import { JoinBoardDrawer } from "@/app/(index)/join-board-drawer";
 import { getBoards, getUser } from "@/_data/user";
-import { db } from "@/db";
-import { usersBoards } from "@/db/schema";
-import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { SignOutButton } from "@/components/ui/signout-button";
+import { SignOutComponent } from "@/components/ui/signout-button";
 import { deleteSession } from "@/_lib/session";
 import { sleep } from "@/_lib/utils";
-import { unstable_cache } from "next/cache";
 
 
 export default () => {
@@ -63,7 +59,7 @@ const Buttons = ({
 
 const signOutAction = async () => {
   "use server"
-  await sleep(2000);
+  await sleep(1000);
   await deleteSession();
 };
 
@@ -83,7 +79,7 @@ const UserInfo = ({
       <div className="flex items-center gap-x-2">
         <h3 className="text-lg font-semibold">Your boards</h3>
         <span className="italic">Logged in as {user.username}</span>
-        <SignOutButton signOutAction={signOutAction} />
+        <SignOutComponent signOutAction={signOutAction} />
       </div>
       <BoardList boardsPromise={boardsPromise} />
     </div>

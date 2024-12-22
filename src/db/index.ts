@@ -12,7 +12,7 @@ const createLocalDbClient = async () => {
 
   console.log("⚙️ Performing migration on development database ...");
   try {
-    await migrate(devDb, { migrationsFolder: "migrations" });
+    await migrate(devDb, { migrationsFolder: "drizzle" });
   } catch (error) {
     console.error("❌ Migration failed\n\n", error);
     console.dir(error)

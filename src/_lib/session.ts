@@ -34,7 +34,6 @@ export const createSession = async (userId: string) => {
   const expires = Date.now() + cookieOptions.duration;
   const token = await encrypt({ sub: userId, exp: expires });
   (await cookies()).set(cookieOptions.name, token);
-  redirect("/");
 };
 
 export const verifySession = async () => {

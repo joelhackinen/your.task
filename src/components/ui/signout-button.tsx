@@ -2,23 +2,24 @@
 
 import { LogOut } from "lucide-react";
 import { Button } from "./button";
-import { useToast } from "@/hooks/use-toast";
+import { useFormStatus } from "react-dom";
 
-export const SignOutButton = ({
+export const SignOutComponent = ({
   signOutAction
 }: {
   signOutAction: () => Promise<void>
 }) => {
-  const { toast } = useToast();
-
-  const handleClick = async () => {
-    const { id, update } = toast({ title: "You are being logged out" });
-    await signOutAction();
-    update({ id, title: "You have been logged out" });
-  ;}
-
   return (
-    <Button onClick={handleClick} size="icon">
+    <form action={signOutAction}>
+      <SignOutButton />
+    </form>
+  );
+};
+
+const SignOutButton = () => {
+  const { pending } = useFormStatus();
+  return (
+    <Button disabled={pending} size="icon">
       <LogOut />
     </Button>
   );

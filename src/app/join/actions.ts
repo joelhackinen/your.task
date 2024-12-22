@@ -85,14 +85,17 @@ export const loginAction = async (_previousState: SignUpActionState, formData: F
   
   const user = userData[0];
 
-  if (!user || (await bcrypt.compare(user.passwordHash, password))) {
+  if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return {
       data,
-      message: "Invalid credentials",
+      errors: {
+        username: ["Invalid credentials"],
+        password: ["Invalid credentials"],
+      },
     };
   }
 
   await createSession(user.id);
 
-  return { message: "hello," + username };
+  return { message: "Hello, " + username + "!" };
 };

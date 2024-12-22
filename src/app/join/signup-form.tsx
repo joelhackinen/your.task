@@ -48,4 +48,4 @@ export const SignUpForm = () => {
       </Button>
     </form>
   );
-}
+};
