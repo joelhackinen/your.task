@@ -42,7 +42,7 @@ export default async function JoinPage() {
         <TabsContent value="login">
           <Card>
             <CardHeader>
-              <CardTitle>Password</CardTitle>
+              <CardTitle>Log in</CardTitle>
               <CardDescription>
                 Welcome back!
               </CardDescription>

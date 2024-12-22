@@ -26,17 +26,17 @@ export type SelectBoard = typeof boards.$inferSelect;
 export type InsertBoard = typeof boards.$inferInsert;
 
 export const cards = pgTable("cards", (t) => ({
-  id: t.uuid().primaryKey(),
+  id: t.uuid().defaultRandom().primaryKey(),
   boardId: t.uuid().notNull().references(() => boards.id, { onDelete: "cascade", onUpdate: "cascade" }),
-  name: t.text().notNull(),
+  title: t.text().notNull(),
   description: t.text(),
 }), (t) => [
-  uniqueIndex("unique_board_cards").on(t.boardId, t.name),
+  uniqueIndex("unique_board_cards").on(t.boardId, t.title),
 ]);
 export type CardType = typeof cards.$inferSelect;
 
 export const tasks = pgTable("tasks", (t) => ({
-  id: t.uuid().primaryKey(),
+  id: t.uuid().defaultRandom().primaryKey(),
   cardId: t.uuid().references(() => cards.id, { onDelete: "cascade", onUpdate: "cascade" }),
   title: t.text().notNull(),
   description: t.text(),

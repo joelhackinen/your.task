@@ -9,4 +9,7 @@ export default defineConfig({
   schema: "./src/db/schema.ts",
   dialect: "postgresql",
   casing: "snake_case",
+  dbCredentials: {
+    url: process.env["LOCAL_POSTGRES_URL"]!
+  }
 });

@@ -1,14 +1,14 @@
 "use server"
 
 import { db } from "@/db";
-import { boards, usersBoards } from "@/db/schema";
+import { boards, cards, usersBoards } from "@/db/schema";
 import * as bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import type { CreateBoardActionState } from "./create-board-drawer";
 import { CreateBoardFormSchema } from "../../_lib/definitions";
 import { sleep } from "@/_lib/utils";
 import { getUser } from "@/_data/user";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { eq } from "drizzle-orm";
 import type { JoinBoardActionState } from "./join-board-drawer";
 import postgres from "postgres";
@@ -54,7 +54,24 @@ export const createBoardAction = async (_previousState: CreateBoardActionState, 
     boardName: name,
   });
 
-  revalidateTag("boards");
+  const [id1, id2, id3] = [uuid(), uuid(), uuid()];
+  await db.insert(cards).values({
+    id: id1,
+    boardId,
+    title: "Todo",
+  });
+  await db.insert(cards).values({
+    id: id2,
+    boardId,
+    title: "Doing",
+  });
+  await db.insert(cards).values({
+    id: id3,
+    boardId,
+    title: "Done",
+  });
+
+  revalidatePath("/");
 
   return { message: `Board ${name} created!` };
 };

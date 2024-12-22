@@ -6,18 +6,12 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/_lib/utils";
 import { useActionState } from "react";
 import { loginAction } from "./actions";
+import type { ActionState } from "@/_lib/definitions";
 
-export type LoginActionState = {
-  data?: {
-    username: FormDataEntryValue,
-    password: FormDataEntryValue,
-  },
-  errors?: {
-    username?: string[],
-    password?: string[],
-  },
-  message?: string,
-};
+export type LoginActionState = ActionState<{
+  username: string;
+  password: string;
+}>;
 
 export const LoginForm = () => {
   const [state, login, pending] = useActionState(loginAction, {});

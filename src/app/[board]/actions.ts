@@ -1,17 +1,34 @@
 "use server"
 
+import { getUser } from "@/_data/user";
+import { AddTaskFormSchema } from "@/_lib/definitions";
+import { sleep } from "@/_lib/utils";
 import { db } from "@/db"; 
 import { boards, cards, tasks } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import type { AddTaskActionState } from "./add-task-form";
 
-export const getBoardAction = async (boardId: string) => {
-  return (await db.select().from(boards).where(eq(boards.id, boardId)))[0];
-};
+export const addTask = async (_: AddTaskActionState, formData: FormData) => {
+  await sleep(2000);
+  
+  const taskData = {
+    name: formData.get("name") ?? "",
+    password: formData.get("password") ?? "",
+  };
 
-export const getCardsAction = async (boardId: string) => {
-  return await db.select().from(cards).where(eq(cards.boardId, boardId));
-};
+  const user = await getUser();
+  
+  if (!user) {
+    return {
+      data: taskData,
+      message: "You need to be logged in!"
+    };
+  }
 
-export const getTasksAction = async (cardId: string) => {
-  return await db.select().from(tasks).where(eq(tasks.cardId, cardId));
+  
+
+
+  const validationResult = AddTaskFormSchema.safeParse(taskData);
+
+
 };

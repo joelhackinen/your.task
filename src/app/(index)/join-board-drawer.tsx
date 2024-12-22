@@ -18,6 +18,7 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { joinBoardAction } from "./actions";
+import type { ActionState } from "@/_lib/definitions";
 
 export const JoinBoardDrawer = () => {
   const [open, setOpen] = React.useState(false);
@@ -45,17 +46,10 @@ export const JoinBoardDrawer = () => {
   );
 };
 
-export type JoinBoardActionState = {
-  data?: {
-    name: FormDataEntryValue,
-    password: FormDataEntryValue,
-  },
-  errors?: {
-    name?: string[],
-    password?: string[],
-  },
-  message?: string,
-};
+export type JoinBoardActionState = ActionState<{
+  name: string;
+  password: string;
+}>;
 
 const JoinBoardForm = ({ className }: React.ComponentProps<"form">) => {
   const [state, createBoard, pending] = React.useActionState(joinBoardAction, {});
@@ -64,14 +58,14 @@ const JoinBoardForm = ({ className }: React.ComponentProps<"form">) => {
     <form className={cn("grid items-start gap-4", className)} action={createBoard}>
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board link</Label>
-        <Input id="boardName" name="name" autoComplete="off" />
+        <Input id="boardName" name="name" defaultValue={state?.data?.name as string} autoComplete="off" />
         {state?.errors?.name &&
           <p className="text-red-500 text-sm">{state.errors.name}</p>
         }
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Password</Label>
-        <Input type="password" id="password" name="password" autoComplete="off" />
+        <Input type="password" id="password" name="password" defaultValue={state?.data?.password as string} autoComplete="off" />
         {state?.errors?.password &&
           <p className="text-red-500 text-sm">{state.errors.password}</p>
         }

@@ -104,7 +104,12 @@ const BoardList = ({
     <ul>
       {boards.map((b) => (
         <li key={b.boardId}>
-          {b.boardName}
+          <Link
+            href={`/${b.boardId}`}
+            className="hover:underline"
+          >
+            {b.boardName}
+          </Link>
         </li>
       ))}
     </ul>

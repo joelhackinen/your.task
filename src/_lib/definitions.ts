@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+export type ActionState<TFields extends Record<string, unknown>> = {
+  data?: {
+    [K in keyof TFields]: FormDataEntryValue;
+  };
+  errors?: {
+    [K in keyof TFields]?: string[];
+  };
+  message?: string;
+};
+
 export const CreateBoardFormSchema = z.object({
   name: z.string().min(1, "You must enter a name"),
   password: z.string(),
@@ -13,4 +23,9 @@ export const SignUpFormSchema = z.object({
 export const LoginFormSchema = z.object({
   username: z.string().min(1, "Enter a username"),
   password: z.string().min(1, "Enter a password"),
+});
+
+export const AddTaskFormSchema = z.object({
+  title: z.string().min(1, "Enter a username"),
+  description: z.string(),
 });

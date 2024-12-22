@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <main className="pt-10 font-[family-name:var(--font-geist-sans)]">
+        <main className="font-[family-name:var(--font-geist-sans)]">
           {children}
         </main>
         <Toaster />

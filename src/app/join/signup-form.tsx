@@ -6,18 +6,12 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/_lib/utils";
 import { useActionState } from "react";
 import { signUpAction } from "./actions";
+import type { ActionState } from "@/_lib/definitions";
 
-export type SignUpActionState = {
-  data?: {
-    username: FormDataEntryValue,
-    password: FormDataEntryValue,
-  },
-  errors?: {
-    username?: string[],
-    password?: string[],
-  },
-  message?: string,
-};
+export type SignUpActionState = ActionState<{
+  username: string;
+  password: string;
+}>;
 
 export const SignUpForm = () => {
   const [state, signUp, pending] = useActionState(signUpAction, {});

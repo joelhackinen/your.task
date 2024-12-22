@@ -1,5 +1,5 @@
 {
-  "id": "036d6835-77c2-4d75-847f-76c4fc2cfd35",
+  "id": "02d5c80d-298e-4fb1-adee-2f3a0fa3c62f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -44,7 +44,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "board_id": {
           "name": "board_id",
@@ -52,8 +53,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "name": {
-          "name": "name",
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -76,7 +77,7 @@
               "nulls": "last"
             },
             {
-              "expression": "name",
+              "expression": "title",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -117,7 +118,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "card_id": {
           "name": "card_id",

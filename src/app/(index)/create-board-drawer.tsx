@@ -19,6 +19,7 @@ import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { createBoardAction } from "./actions";
 import { useToast } from "@/hooks/use-toast";
+import type { ActionState } from "@/_lib/definitions";
 
 export const CreateBoardDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -48,17 +49,10 @@ export const CreateBoardDrawer = () => {
   );
 };
 
-export type CreateBoardActionState = {
-  data?: {
-    name: FormDataEntryValue,
-    password: FormDataEntryValue,
-  },
-  errors?: {
-    name?: string[],
-    password?: string[],
-  },
-  message?: string,
-};
+export type CreateBoardActionState = ActionState<{
+  name: string;
+  password: string;
+}>;
 
 interface CreateBoardFormProps extends ComponentProps<"form"> {
   drawerRef: RefObject<HTMLButtonElement>
@@ -94,7 +88,7 @@ const CreateBoardForm = ({
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
-        <Input name="password" type="password" id="password" autoComplete="off" />
+        <Input name="password" type="password" id="password" defaultValue={state?.data?.password as string} autoComplete="off" />
         {state?.errors?.password &&
           <p className="text-red-500 text-sm">{state.errors.password}</p>
         }
