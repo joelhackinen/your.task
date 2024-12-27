@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ export type SignUpActionState = ActionState<{
 }>;
 
 export const SignUpForm = () => {
-  const [state, signUp, pending] = useActionState(signUpAction, {});
+  const [state, signUp, pending] = useActionState(signUpAction, undefined);
 
   return (
     <form className="space-y-2" action={signUp}>

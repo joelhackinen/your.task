@@ -1,4 +1,4 @@
-import "server-only"
+import "server-only";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -11,29 +11,30 @@ const cookieOptions = {
   duration: 24 * 60 * 1000,
 };
 
-export const encrypt = async (payload: JWTPayload) => {
-  return new SignJWT(payload)
+export const encrypt = async (payload: JWTPayload) => (
+  new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("1day")
     .sign(key)
-};
+);
 
-export const decrypt = async (token: string) => {
+export const decrypt = async (token: string | undefined = "") => {
   try {
     const { payload } = await jwtVerify(token, key, {
       algorithms: ["HS256"],
     });
     return payload;
   } catch (err) {
+    console.log(err);
     return null;
   }
 };
 
 export const createSession = async (userId: string) => {
-  const expires = Date.now() + cookieOptions.duration;
-  const token = await encrypt({ sub: userId, exp: expires });
-  (await cookies()).set(cookieOptions.name, token);
+  const expiresAt = Date.now() + cookieOptions.duration;
+  const token = await encrypt({ sub: userId, exp: expiresAt });
+  (await cookies()).set(cookieOptions.name, token, { ...cookieOptions, expires: expiresAt });
 };
 
 export const verifySession = async () => {

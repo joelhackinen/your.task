@@ -1,26 +1,36 @@
 import { cookies } from "next/headers";
-import { NextResponse, type NextRequest } from "next/server"
-import { decrypt } from "./_lib/session";
+import { NextResponse, type NextRequest } from "next/server";
+import { decrypt } from "@/_lib/session";
 
 
 const PROTECTED_ROUTES = [
   "/board",
 ];
 
-export default async (req: NextRequest) => {
-  const currentPath = req.nextUrl.pathname;
-  const isProtectedRoute = PROTECTED_ROUTES.includes(currentPath);
+const PUBLIC_ROUTES = [
+  "/join",
+];
 
-  if (isProtectedRoute) {
-    const cookie = (await cookies()).get("session")?.value;
+const middleware = async (req: NextRequest) => {
+  const path = req.nextUrl.pathname;
+  const isProtectedRoute = PROTECTED_ROUTES.includes(path);
+  const isPublicRoute = PUBLIC_ROUTES.includes(path);
 
-    if (!cookie || !(await decrypt(cookie))?.sub) {
-      return NextResponse.redirect(new URL("/join", req.nextUrl));
-    }
+  const cookie = (await cookies()).get("session")?.value;
+  const userId = (await decrypt(cookie))?.sub;
+
+  if (isProtectedRoute && !userId) {
+    return NextResponse.redirect(new URL("/join", req.nextUrl));
   }
+
+  if (isPublicRoute && userId) {
+    return NextResponse.redirect(new URL("/", req.nextUrl));
+  }
+
   return NextResponse.next();
 };
 
+export default middleware;
 
 export const config = {
   matcher: [
@@ -33,4 +43,4 @@ export const config = {
      */
     '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
-}
+};

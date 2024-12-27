@@ -1,78 +1,70 @@
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateBoardDrawer } from "@/app/(index)/create-board-drawer";
 import { JoinBoardDrawer } from "@/app/(index)/join-board-drawer";
-import { getBoards, getUser } from "@/_data/user";
+import { getUser, getUsersBoards } from "@/_data/user";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { SignOutComponent } from "@/components/ui/signout-button";
+import { SignOutComponent } from "@/components/signout";
 import { deleteSession } from "@/_lib/session";
-import { sleep } from "@/_lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { BoardListItem } from "./board-list-item";
 
 
-export default () => {
-  const userPromise = getUser();
-
+const IndexPage = () => {
+  getUser();
   return (
-    <div className="container mx-auto space-y-4">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>Welcome to your.task</CardTitle>
-          <CardDescription>Easy all-purpose task board</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col gap-2 items-center">
-            <Suspense>
-              <Buttons userPromise={userPromise} />
-            </Suspense>
-          </div>
-          <Suspense fallback={(<div>Who are you...</div>)}>
-            <UserInfo userPromise={userPromise} />
-          </Suspense>
-        </CardContent>
-      </Card>
-    </div>
+    <Card className="container mx-auto">
+      <CardHeader className="text-center">
+        <CardTitle>Welcome to your.task</CardTitle>
+        <CardDescription>Easy all-purpose task board</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Suspense fallback={(
+          <div className="flex flex-col gap-y-2 w-28 mx-auto">
+            <Skeleton className="h-10" />
+            <Skeleton className="h-10" />
+          </div>)
+        }>
+          <Buttons />
+        </Suspense>
+        <Suspense fallback={(<div>Who are you...</div>)}>
+          <UserInfo />
+        </Suspense>
+      </CardContent>
+    </Card>
   );
 };
 
-const Buttons = ({
-  userPromise,
-}: {
-  userPromise: Promise<{ id: string, username: string } | undefined>
-}) => {
-  const user = use(userPromise);
+export default IndexPage;
+
+const Buttons = async () => {
+  const user = await getUser();
 
   if (!user) {
     return (
-      <Button asChild>
+      <Button className="flex w-24 mx-auto" asChild>
         <Link href="/join">Join now!</Link>
       </Button>
     );
   }
   return (
-    <>
+    <div className="flex flex-col gap-y-2 w-28 mx-auto">
       <CreateBoardDrawer />
       <JoinBoardDrawer />
-    </>
+    </div>
   );
 };
 
 const signOutAction = async () => {
-  "use server"
-  await sleep(1000);
+  "use server";
   await deleteSession();
 };
 
-const UserInfo = ({
-  userPromise,
-}: {
-  userPromise: Promise<{ id: string, username: string } | undefined>,
-}) => {
-  const user = use(userPromise);
+const UserInfo = async () => {
+  const user = await getUser();
 
   if (!user) return null;
-
-  const boardsPromise = getBoards(user.id);
 
   return (
     <div>
@@ -81,17 +73,19 @@ const UserInfo = ({
         <span className="italic">Logged in as {user.username}</span>
         <SignOutComponent signOutAction={signOutAction} />
       </div>
-      <BoardList boardsPromise={boardsPromise} />
+      <Suspense fallback="Loading boards...">
+        <BoardList userId={user.id} />
+      </Suspense>
     </div>
   );
 };
 
-const BoardList = ({
-  boardsPromise,
+const BoardList = async ({
+  userId,
 }: {
-  boardsPromise: Promise<{ boardId: string, boardName: string }[]>,
+  userId: string,
 }) => {
-  const boards = use(boardsPromise);
+  const boards = await getUsersBoards(userId);
 
   if (boards.length === 0) {
     return (
@@ -103,14 +97,7 @@ const BoardList = ({
   return (
     <ul>
       {boards.map((b) => (
-        <li key={b.boardId}>
-          <Link
-            href={`/${b.boardId}`}
-            className="hover:underline"
-          >
-            {b.boardName}
-          </Link>
-        </li>
+        <BoardListItem key={b.boardId} board={b} />
       ))}
     </ul>
   );

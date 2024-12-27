@@ -1,6 +1,4 @@
-"use client"
-
-import * as React from "react";
+"use client";
 
 import {
   Drawer,
@@ -19,13 +17,16 @@ import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { joinBoardAction } from "./actions";
 import type { ActionState } from "@/_lib/definitions";
+import { useActionState, useEffect, useRef, useState, type ComponentProps, type ComponentRef, type RefObject } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const JoinBoardDrawer = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+    const drawerTriggerRef = useRef<ComponentRef<typeof DrawerTrigger>>(null!);
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
+      <DrawerTrigger ref={drawerTriggerRef} asChild>
         <Button>Join Existing</Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -35,7 +36,7 @@ export const JoinBoardDrawer = () => {
             Use the link of the board to join. You may leave the password empty if the board is public.
           </DrawerDescription>
         </DrawerHeader>
-        <JoinBoardForm className="px-4" />
+        <JoinBoardForm className="px-4" drawerRef={drawerTriggerRef} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button className="w-36" variant="outline">Cancel</Button>
@@ -51,13 +52,27 @@ export type JoinBoardActionState = ActionState<{
   password: string;
 }>;
 
-const JoinBoardForm = ({ className }: React.ComponentProps<"form">) => {
-  const [state, createBoard, pending] = React.useActionState(joinBoardAction, {});
+interface JoinBoardFormProps extends ComponentProps<"form"> {
+  drawerRef: RefObject<HTMLButtonElement>
+}
+
+const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
+  const [state, createBoard, pending] = useActionState(joinBoardAction, undefined);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (state?.message) {
+      toast({
+        title: state.message,
+      });
+      drawerRef.current.click();
+    }
+  }, [state, toast, drawerRef]);
   
   return (
     <form className={cn("grid items-start gap-4", className)} action={createBoard}>
       <div className="grid gap-2">
-        <Label htmlFor="boardName">Board link</Label>
+        <Label htmlFor="boardName">Board ID</Label>
         <Input id="boardName" name="name" defaultValue={state?.data?.name as string} autoComplete="off" />
         {state?.errors?.name &&
           <p className="text-red-500 text-sm">{state.errors.name}</p>

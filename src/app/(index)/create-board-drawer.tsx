@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useActionState, useRef, type ComponentRef, type ComponentProps, type RefObject, useEffect } from "react";
 
@@ -62,17 +62,17 @@ const CreateBoardForm = ({
   className,
   drawerRef,
 }: CreateBoardFormProps) => {
-  const [state, createBoard, pending] = useActionState(createBoardAction, {});
+  const [state, createBoard, pending] = useActionState(createBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       toast({
         title: state.message,
       });
       drawerRef.current.click();
     }
-  }, [state, toast]);
+  }, [state, toast, drawerRef]);
 
   return (
     <form

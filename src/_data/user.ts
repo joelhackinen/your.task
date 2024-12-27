@@ -1,6 +1,6 @@
-import { verifySession } from "@/_lib/session"
+import { verifySession } from "@/_lib/session";
 import { db } from "@/db";
-import { users, usersBoards } from "@/db/schema";
+import { boards, cards, users, usersBoards } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 
@@ -21,14 +21,24 @@ export const getUser = cache(async () => {
   return user;
 });
 
-export const getBoards = async (userId: string) => {
-  return await db
-    .select({ boardId: usersBoards.boardId, boardName: usersBoards.boardName })
-    .from(usersBoards)
-    .where(eq(usersBoards.userId, userId));
-};
+export const hasAccessToBoard = cache(async (userId: string, boardId: string) => {
+  const usersBoards = await getUsersBoards(userId);
+  return usersBoards.some(b => b.boardId === boardId);
+});
 
-export const getBoard = cache(async (userId: string, boardId: string) => {
-  const usersBoards = await getBoards(userId);
-  return usersBoards.find(b => b.boardId === boardId);
+export const getUsersBoards = cache(async (userId: string) => {
+  const boards = await db.select().from(usersBoards).where(eq(usersBoards.userId, userId));
+  return boards;
+});
+
+export const getBoard = cache(async (boardId: string) => {
+  const [board] = await db.select().from(boards).where(eq(boards.id, boardId));
+  return board;
+});
+
+export const getBoardByCardId = cache(async (cardId: string) => {
+  const [card] = await db.select().from(cards).where(eq(cards.id, cardId));
+  if (!card) return;
+
+  return await getBoard(card.boardId);
 });
