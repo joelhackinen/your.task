@@ -1,7 +1,7 @@
 "use server";
 
-import { db } from "@/db";
-import { boards, cards, usersBoards } from "@/db/schema";
+import { db } from "@/_lib/db";
+import { boards, cards, usersBoards } from "@/_lib/db/schema";
 import * as bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import type { CreateBoardActionState } from "./create-board-drawer";

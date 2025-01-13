@@ -35,9 +35,15 @@
     ],
     "paths": {
       "@/*": [
-        "./src/*"
-      ]
-    }
+        "./src/*",
+      ],
+      "@db": [
+        "./src/_lib/db/index.ts",
+      ],
+      "@db/*": [
+        "./src/_lib/db/*",
+      ],
+    },
   },
   "include": [
     "next-env.d.ts",

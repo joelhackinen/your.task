@@ -1,6 +1,6 @@
 import { verifySession } from "@/_lib/session";
-import { db } from "@/db";
-import { boards, cards, users, usersBoards } from "@/db/schema";
+import { db } from "@/_lib/db";
+import { boards, cards, users, usersBoards } from "@/_lib/db/schema";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 

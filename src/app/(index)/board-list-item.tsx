@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { SelectUsersBoards } from "@/db/schema";
+import type { SelectUsersBoards } from "@/_lib/db/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Copy } from "lucide-react";
 import Link from "next/link";

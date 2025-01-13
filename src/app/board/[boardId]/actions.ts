@@ -2,8 +2,8 @@
 
 import { getBoardByCardId, getUser, hasAccessToBoard } from "@/_data/user";
 import { AddTaskFormSchema } from "@/_lib/definitions";
-import { db } from "@/db"; 
-import { tasks } from "@/db/schema";
+import { db } from "@/_lib/db"; 
+import { tasks } from "@/_lib/db/schema";
 import type { AddTaskActionState } from "./add-task-form";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";

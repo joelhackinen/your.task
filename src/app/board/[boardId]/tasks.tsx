@@ -1,4 +1,4 @@
-import { type CardType, type TaskType } from "@/db/schema";
+import { type CardType, type TaskType } from "@/_lib/db/schema";
 import { Suspense, use } from "react";
 import { Task } from "./task";
 import { getTasks } from "@/_data/board";

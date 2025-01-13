@@ -1,5 +1,5 @@
-import { db } from "@/db";
-import { cards, tasks } from "@/db/schema";
+import { db } from "@/_lib/db";
+import { cards, tasks } from "@/_lib/db/schema";
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 

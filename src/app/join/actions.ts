@@ -3,8 +3,8 @@
 import * as bcrypt from "bcrypt";
 import { LoginFormSchema, SignUpFormSchema } from "../../_lib/definitions";
 import type { SignUpActionState } from "./signup-form";
-import { db } from "@/db";
-import { users } from "@/db/schema";
+import { db } from "@/_lib/db";
+import { users } from "@/_lib/db/schema";
 import { PostgresError } from "postgres";
 import { createSession } from "../../_lib/session";
 import { eq } from "drizzle-orm";
@@ -33,7 +33,7 @@ export const signUpAction = async (_: SignUpActionState, formData: FormData) => 
     .values({ username, passwordHash })
     .returning({ id: users.id, username: users.username })
     .then((value) => new QueryResultSuccess(value[0]!))
-    .catch((reason: PostgresError) => new QueryResultError(reason.code));
+    .catch((reason: PostgresError) => new QueryResultError(reason));
   
   if (!result.success) {
     return {

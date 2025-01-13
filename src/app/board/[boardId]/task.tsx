@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { TaskType } from "@/db/schema";
+import type { TaskType } from "@/_lib/db/schema";
 import { Ellipsis, Trash } from "lucide-react";
 import {
   DropdownMenu,
