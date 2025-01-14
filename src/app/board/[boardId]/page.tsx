@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 
-const BoardPage = async ({
+const BoardPage = ({
   params,
 }: {
   params: Promise<{ boardId: string }>,
