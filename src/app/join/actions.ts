@@ -80,7 +80,7 @@ export const loginAction = async (_: SignUpActionState, formData: FormData) => {
         username: ["Unknown error"],
         password: ["Unknown error"],
       },
-    }
+    };
   }
 
   const user = result.data[0];

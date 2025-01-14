@@ -129,7 +129,7 @@ export const joinBoardAction = async (
   try {
     await db
       .insert(usersBoards)
-      .values({ userId: user.id, boardId: board.id, boardName: board.name })
+      .values({ userId: user.id, boardId: board.id, boardName: board.name });
   } catch (err) {
     if (err instanceof postgres.PostgresError && err.code == "23505") {
       return {
