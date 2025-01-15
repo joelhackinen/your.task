@@ -16,14 +16,13 @@ COPY . .
 RUN npm run build
 
 # Stage 3: Production server
-FROM gcr.io/distroless/nodejs22-debian12:latest-amd64 AS runner
+FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ARG POSTGRES_URL
-ENV POSTGRES_URL=${POSTGRES_URL}
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
 EXPOSE 3000
-CMD ["server.js"]
+CMD ["node", "server.js"]
