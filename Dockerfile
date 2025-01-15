@@ -16,6 +16,10 @@ RUN npm run build
 # Stage 3: Production server
 FROM base AS runner
 WORKDIR /app
+
+ARG POSTGRES_URL
+ENV POSTGRES_URL ${POSTGRES_URL}
+
 ENV NODE_ENV=production
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
