@@ -20,7 +20,7 @@ export const Cards = async ({ params, className }: CardsProps) => {
     <div className={cn("flex gap-4 overflow-y-auto", className)}>
       {cards.map((c) => (
         <Card className="flex-1 min-w-52 overflow-y-auto" key={c.id}>
-          <CardHeader className="flex flex-row justify-between items-center sticky top-0 backdrop-blur-sm">
+          <CardHeader className="flex flex-row justify-between items-center sticky top-0 backdrop-blur-xs">
             <CardTitle>
               {c.title}
             </CardTitle>

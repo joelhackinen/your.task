@@ -24,7 +24,7 @@ export const Task = ({
 }) => (
     <li className={cn(
       "flex justify-between items-center px-1 group h-[40px] rounded-md",
-      "hover:bg-gray-100 has-[[data-state=open]]:bg-gray-100",
+      "hover:bg-gray-100 has-data-[state=open]:bg-gray-100",
     )}>
       <div className="truncate">{task.title}</div>
       <DropdownMenu>
