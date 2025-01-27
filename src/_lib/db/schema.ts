@@ -37,7 +37,7 @@ export type CardType = typeof cards.$inferSelect;
 
 export const tasks = pgTable("tasks", (t) => ({
   id: t.uuid().defaultRandom().primaryKey(),
-  cardId: t.uuid().references(() => cards.id, { onDelete: "cascade", onUpdate: "cascade" }),
+  cardId: t.uuid().notNull().references(() => cards.id, { onDelete: "cascade", onUpdate: "cascade" }),
   title: t.text().notNull(),
   description: t.text(),
 }));

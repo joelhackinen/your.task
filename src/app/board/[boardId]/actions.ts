@@ -7,6 +7,7 @@ import { tasks } from "@/_lib/db/schema";
 import type { AddTaskActionState } from "./add-task-form";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
 export const addTaskAction = async (_: AddTaskActionState, formData: FormData) => {  
   const taskData = {
@@ -50,7 +51,7 @@ export const addTaskAction = async (_: AddTaskActionState, formData: FormData) =
   });
 
   // revalidate the path
-  revalidatePath(`/${board.id}`);
+  revalidatePath(`/board/${board.id}`);
 
   // reset title and description
   return {
@@ -62,4 +63,41 @@ export const addTaskAction = async (_: AddTaskActionState, formData: FormData) =
     },
     message: "Task " + title + " added successfully!"
   };
+};
+
+export const deleteTaskAction = async (taskId: string, cardId: string) => {
+  const user = await getUser();
+  if (!user) redirect("/join");
+
+  // check if user is member of the board
+  const board = await getBoardByCardId(cardId);
+  if (!board) redirect("/");
+
+  const hasAccess = await hasAccessToBoard(user.id, board.id);
+  if (!hasAccess) redirect("/");
+
+  console.log("deleting", taskId, "from tasks");
+  await db.delete(tasks).where(eq(tasks.id, taskId));
+
+  revalidatePath(`/board/${board.id}`);
+};
+
+export const moveCardAction = async (from: string, to: string, taskId: string) => {
+  const user = await getUser();
+  if (!user) redirect("/join");
+
+  // check if user is member of the board
+  const board = await getBoardByCardId(from);
+  if (!board) redirect("/join");
+
+  const hasAccess = await hasAccessToBoard(user.id, board.id);
+  if (!hasAccess) redirect("/join");
+
+  const [deletedTask] = await db.delete(tasks).where(eq(tasks.id, taskId)).returning();
+
+  if (!deletedTask) return;
+
+  await db.insert(tasks).values({ ...deletedTask, cardId: to });
+
+  revalidatePath(`/board/${board.id}`);
 };

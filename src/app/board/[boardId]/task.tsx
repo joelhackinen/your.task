@@ -16,12 +16,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/_lib/utils";
+import { deleteTaskAction, moveCardAction } from "./actions";
+import { CardsContext } from "./cards-context";
+import { use } from "react";
 
 export const Task = ({
   task,
 }: {
   task: TaskType
-}) => (
+}) => {
+  const cards = use(CardsContext);
+
+  return (
     <li className={cn(
       "flex justify-between items-center px-1 group h-[40px] rounded-md",
       "hover:bg-gray-100 has-data-[state=open]:bg-gray-100",
@@ -42,18 +48,28 @@ export const Task = ({
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Move to...</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Doing</DropdownMenuItem>
-                <DropdownMenuItem>Done</DropdownMenuItem>
+              <DropdownMenuSubContent className="flex flex-col">
+                {cards?.cards.map((card) => (
+                  card.id === task.cardId
+                    ? null
+                    : (
+                      <Button key={card.id} asChild variant="ghost" className="h-fit" onClick={() => moveCardAction(task.cardId, card.id, task.id)}>
+                        <DropdownMenuItem>{card.title}</DropdownMenuItem>
+                      </Button>
+                    )
+                ))}
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex items-center justify-between">
-            <div>Delete</div>
-            <Trash className="text-red-500" />
-          </DropdownMenuItem>
+          <Button asChild variant="ghost" className="h-fit" onClick={() => deleteTaskAction(task.id, task.cardId)}>
+            <DropdownMenuItem className="flex items-center justify-between">
+              <span>Delete</span>
+              <Trash className="text-red-500" />
+            </DropdownMenuItem>
+          </Button>
         </DropdownMenuContent>
       </DropdownMenu>
     </li>
   );
+};
