@@ -21,7 +21,7 @@ export default function Page() {
     { id: "c2", items: ["4", "5", "6"] },
     { id: "c3", items: ["7", "8"] },
   ]);
-  const [active, setActive] = useState<UniqueIdentifier | null>(null);
+  const [, setActive] = useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
     useSensor(MouseSensor),
@@ -50,9 +50,7 @@ export default function Page() {
 
     if (activeIndex === overIndex) return;
 
-    setItems((prev) => {
-      return prev;
-    });
+    setItems((prev) => prev);
   };
 
   const findContainerOf = (id: UniqueIdentifier) => {
