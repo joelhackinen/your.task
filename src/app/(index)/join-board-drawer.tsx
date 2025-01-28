@@ -48,7 +48,7 @@ export const JoinBoardDrawer = () => {
 };
 
 export type JoinBoardActionState = ActionState<{
-  name: string;
+  id: string;
   password: string;
 }>;
 
@@ -57,7 +57,7 @@ interface JoinBoardFormProps extends ComponentProps<"form"> {
 }
 
 const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
-  const [state, createBoard, pending] = useActionState(joinBoardAction, undefined);
+  const [state, joinBoard, pending] = useActionState(joinBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -70,17 +70,17 @@ const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
   }, [state, toast, drawerRef]);
   
   return (
-    <form className={cn("grid items-start gap-4", className)} action={createBoard}>
+    <form className={cn("grid items-start gap-4", className)} action={joinBoard}>
       <div className="grid gap-2">
-        <Label htmlFor="boardName">Board ID</Label>
-        <Input id="boardName" name="name" defaultValue={state?.data?.name as string} autoComplete="off" />
-        {state?.errors?.name &&
-          <p className="text-red-500 text-sm">{state.errors.name}</p>
+        <Label htmlFor="boardIdField">Board ID</Label>
+        <Input id="boardIdField" name="id" defaultValue={state?.data?.id as string} autoComplete="off" />
+        {state?.errors?.id &&
+          <p className="text-red-500 text-sm">{state.errors.id}</p>
         }
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
-        <Input type="password" id="password" name="password" defaultValue={state?.data?.password as string} autoComplete="off" />
+        <Label htmlFor="boardPasswordField">Password</Label>
+        <Input type="password" id="boardPasswordField" name="password" defaultValue={state?.data?.password as string} autoComplete="off" />
         {state?.errors?.password &&
           <p className="text-red-500 text-sm">{state.errors.password}</p>
         }

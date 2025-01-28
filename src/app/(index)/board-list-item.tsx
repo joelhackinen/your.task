@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import type { SelectUsersBoards } from "@/_lib/db/schema";
-import { useToast } from "@/hooks/use-toast";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 export const BoardListItem = ({
   board: {
@@ -14,18 +14,29 @@ export const BoardListItem = ({
 }: {
   board: SelectUsersBoards
 }) => {
-  const { toast } = useToast();
+  const [showCopied, setShowCopied] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(boardId);
-    toast({
-      description: (
-        <div>
-          Identifier for <span className="italic">{boardName}</span> copied!
-        </div>
-      )
-    });
+    setShowCopied(true);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setShowCopied(false);
+    }, 3000);
   };
+
   return (
     <li key={boardId} className="flex gap-x-2 items-center">
       <Link
@@ -42,7 +53,7 @@ export const BoardListItem = ({
           </span>
         </div>
         <Button size="icon" variant="ghost" className="size-6" onClick={handleCopy}>
-          <Copy size={14} />
+          {showCopied ? <Check size={14} /> : <Copy size={14} />}
         </Button>
       </div>
     </li>

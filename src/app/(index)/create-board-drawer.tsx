@@ -35,7 +35,7 @@ export const CreateBoardDrawer = () => {
         <DrawerHeader className="text-left">
           <DrawerTitle>Create a new task board</DrawerTitle>
           <DrawerDescription>
-            Give it a name and share your tasks with others!
+            Give it a name and share your goals with others!
           </DrawerDescription>
         </DrawerHeader>
         <CreateBoardForm className="px-4" drawerRef={drawerTriggerRef} />

@@ -15,6 +15,11 @@ export const CreateBoardFormSchema = z.object({
   password: z.string(),
 });
 
+export const JoinBoardFormSchema = z.object({
+  id: z.string().min(1, "You must enter an ID"),
+  password: z.string(),
+});
+
 export const SignUpFormSchema = z.object({
   username: z.string().min(2, "Username must be at least two characters"),
   password: z.string().min(6, "Password must be at least 6 characters long"),

@@ -5,7 +5,7 @@ import { boards, cards, usersBoards } from "@/_lib/db/schema";
 import * as bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import type { CreateBoardActionState } from "./create-board-drawer";
-import { CreateBoardFormSchema } from "../../_lib/definitions";
+import { CreateBoardFormSchema, JoinBoardFormSchema } from "../../_lib/definitions";
 import { getUser } from "@/_data/user";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
@@ -81,7 +81,7 @@ export const joinBoardAction = async (
   formData: FormData
 ) => {
   const boardData = {
-    name: formData.get("name"),
+    id: formData.get("id"),
     password: formData.get("password"),
   };
 
@@ -93,7 +93,7 @@ export const joinBoardAction = async (
       message: "You need to be logged in!"
     };
   }
-  const validationResult = CreateBoardFormSchema.safeParse(boardData);
+  const validationResult = JoinBoardFormSchema.safeParse(boardData);
 
   if (!validationResult.success) {
     return {
@@ -101,18 +101,19 @@ export const joinBoardAction = async (
       errors: validationResult.error.flatten().fieldErrors,
     };
   }
-  const { name, password } = validationResult.data;
+  const { id, password } = validationResult.data;
 
   const [board] = await db
     .select()
     .from(boards)
-    .where(eq(boards.name, name));
+    .where(eq(boards.id, id));
   
   if (!board) {
     return {
       data: boardData,
       errors: {
-        name: ["Board " + name + " doesn't exist"],
+        id: ["Invalid credentials"],
+        password: ["Invalid credentials"],
       },
     };
   }
@@ -121,7 +122,8 @@ export const joinBoardAction = async (
     return {
       data: boardData,
       errors: {
-        password: ["Invalid password"],
+        id: ["Invalid credentials"],
+        password: ["Invalid credentials"],
       },
     };
   }
@@ -135,18 +137,19 @@ export const joinBoardAction = async (
       return {
         data: boardData,
         errors: {
-          name: ["You already have this board"],
+          id: ["You already belong to this board"],
         },
       };
     }
     return {
       data: boardData,
       errors: {
-        name: ["Error creating a board"],
+        id: ["Error creating a board"],
         password: ["Error creating a board"],
       },
     };
   }
+  revalidatePath("/");
 
-  return { message: `Joined ${name} succesfully!` };
+  return { message: `Joined ${board.name} succesfully!` };
 };

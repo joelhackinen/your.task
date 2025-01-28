@@ -7,6 +7,6 @@ const config = loadEnvConfig(
 );
 
 console.log(
-  "These .env files were loaded:",
+  "These env files were loaded:",
   config.loadedEnvFiles.map((f) => f.path),
 );
