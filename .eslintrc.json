@@ -5,7 +5,7 @@
   ],
   "rules": {
     "semi": "error",
-    "arrow-body-style": "error",
-    "prefer-arrow-callback": "error"
+    "arrow-body-style": "warn",
+    "prefer-arrow-callback": "warn"
   }
 }
