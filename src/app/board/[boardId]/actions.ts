@@ -26,7 +26,6 @@ export const addTaskAction = async (_: AddTaskActionState, formData: FormData) =
     };
   }
 
-  // check if user is member of the board
   const board = await getBoardByCardId(taskData.cardId as string);
   if (!board) redirect("/");
 
@@ -69,7 +68,6 @@ export const deleteTaskAction = async (taskId: string, cardId: string) => {
   const user = await getUser();
   if (!user) redirect("/join");
 
-  // check if user is member of the board
   const board = await getBoardByCardId(cardId);
   if (!board) redirect("/");
 
@@ -86,7 +84,6 @@ export const moveCardAction = async (from: string, to: string, taskId: string) =
   const user = await getUser();
   if (!user) redirect("/join");
 
-  // check if user is member of the board
   const board = await getBoardByCardId(from);
   if (!board) redirect("/join");
 

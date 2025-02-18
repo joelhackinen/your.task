@@ -17,13 +17,11 @@ export const BoardListItem = ({
   const [showCopied, setShowCopied] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    return () => {
+  useEffect(() => () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-    };
-  }, []);
+    }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(boardId);
@@ -52,7 +50,7 @@ export const BoardListItem = ({
             {boardId.slice(-4)}
           </span>
         </div>
-        <Button size="icon" variant="ghost" className="size-6" onClick={handleCopy}>
+        <Button size="icon" variant="ghost" className="size-6" onClick={handleCopy} disabled={showCopied} >
           {showCopied ? <Check size={14} /> : <Copy size={14} />}
         </Button>
       </div>
