@@ -3,7 +3,7 @@
 import { getBoardByCardId, getUser, hasAccessToBoard } from "@/_data/user";
 import { AddTaskFormSchema } from "@/_lib/definitions";
 import { db } from "@/_lib/db"; 
-import { tasks } from "@/_lib/db/schema";
+import { cards, tasks } from "@/_lib/db/schema";
 import type { AddTaskActionState } from "./add-task-form";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -97,4 +97,11 @@ export const moveCardAction = async (from: string, to: string, taskId: string) =
   await db.insert(tasks).values({ ...deletedTask, cardId: to });
 
   revalidatePath(`/board/${board.id}`);
+};
+
+export const createCardAction = async (boardId: string) => {
+  "use server";
+
+  await db.insert(cards).values({ title: "New card", boardId });
+  revalidatePath(`/board/${boardId}`);
 };

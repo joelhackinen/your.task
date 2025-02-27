@@ -1,5 +1,5 @@
 {
-  "id": "02d5c80d-298e-4fb1-adee-2f3a0fa3c62f",
+  "id": "62db2cae-436e-4e11-bfc6-9a9764fd83cd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -66,29 +66,7 @@
           "notNull": false
         }
       },
-      "indexes": {
-        "unique_board_cards": {
-          "name": "unique_board_cards",
-          "columns": [
-            {
-              "expression": "board_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "title",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "cards_board_id_boards_id_fk": {
           "name": "cards_board_id_boards_id_fk",
@@ -125,7 +103,7 @@
           "name": "card_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "title": {
           "name": "title",

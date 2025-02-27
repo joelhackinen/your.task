@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", (t) => ({
   id: t.uuid().defaultRandom().primaryKey(),
@@ -30,9 +30,7 @@ export const cards = pgTable("cards", (t) => ({
   boardId: t.uuid().notNull().references(() => boards.id, { onDelete: "cascade", onUpdate: "cascade" }),
   title: t.text().notNull(),
   description: t.text(),
-}), (t) => [
-  uniqueIndex("unique_board_cards").on(t.boardId, t.title),
-]);
+}));
 export type CardType = typeof cards.$inferSelect;
 
 export const tasks = pgTable("tasks", (t) => ({

@@ -42,8 +42,8 @@ export default function Page() {
 
     const activeContainer = findContainerOf(activeId);
     const overContainer = findContainerOf(overId);
-    console.log(activeContainer)
-    console.log(overContainer)
+    console.log(activeContainer);
+    console.log(overContainer);
 
 
     if (!activeContainer || !overContainer || activeContainer !== overContainer) return;

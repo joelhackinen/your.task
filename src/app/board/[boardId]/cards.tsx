@@ -1,12 +1,11 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PlusCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { AddTaskForm } from "./add-task-form";
 import { Tasks } from "./tasks";
 import { cn } from "@/_lib/utils";
 import { getCards } from "@/_data/board";
 import { CardsContextProvider } from "./cards-provide";
+import { CreateCardButton } from "./create-card-button";
 
 interface CardsProps extends React.ComponentProps<"div"> {
   className: string;
@@ -34,9 +33,7 @@ export const Cards = async ({ params, className }: CardsProps) => {
           </Card>
         ))}
       </CardsContextProvider>
-      <Button className="relative h-full w-10" variant="outline" size="icon" aria-label="New card">
-        <PlusCircle className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" />
-      </Button>
+      <CreateCardButton boardId={boardId} />
     </div>
   );
 };

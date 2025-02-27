@@ -8,14 +8,14 @@ const key = new TextEncoder().encode("asd");
 const cookieOptions = {
   name: "session",
   options: { httpOnly: true, secure: true, sameSite: "lax", path: "/" },
-  duration: 24 * 60 * 1000,
+  duration: 7 * 24 * 60 * 1000,
 };
 
 export const encrypt = async (payload: JWTPayload) => (
   new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1day")
+    .setExpirationTime("1 week")
     .sign(key)
 );
 
@@ -34,7 +34,16 @@ export const decrypt = async (token: string | undefined = "") => {
 export const createSession = async (userId: string) => {
   const expiresAt = Date.now() + cookieOptions.duration;
   const token = await encrypt({ sub: userId, exp: expiresAt });
-  (await cookies()).set(cookieOptions.name, token, { ...cookieOptions, expires: expiresAt });
+
+  (await cookies())
+    .set(
+      cookieOptions.name,
+      token,
+      {
+        ...cookieOptions,
+        expires: expiresAt,
+      },
+    );
 };
 
 export const verifySession = async () => {
