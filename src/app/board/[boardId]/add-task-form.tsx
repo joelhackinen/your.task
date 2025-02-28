@@ -54,8 +54,9 @@ export const AddTaskForm = ({
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="outline" size="icon" aria-label={`Add new task to ${cardName}`}>
+          <Button variant="ghost" aria-label={`Add new task to ${cardName}`}>
             <PlusCircle />
+            <span>Add item</span>
           </Button>
         </DialogTrigger>
         <DialogContent>

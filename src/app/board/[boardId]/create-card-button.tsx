@@ -10,9 +10,8 @@ export const CreateCardButton = ({
   boardId: string,
 }) => (
     <Button
-      className="relative h-7/8"
+      className="relative h-full w-8"
       variant="outline"
-      size="icon"
       aria-label="New card"
       onClick={() => createCardAction(boardId)}
     >
