@@ -99,9 +99,22 @@ export const moveCardAction = async (from: string, to: string, taskId: string) =
   revalidatePath(`/board/${board.id}`);
 };
 
-export const createCardAction = async (boardId: string) => {
-  "use server";
+export const editCardTitleAction = async (cardId: string, newTitle: string) => {
+  const user = await getUser();
+  if (!user) redirect("/join");
 
+  const board = await getBoardByCardId(cardId);
+  if (!board) redirect("/join");
+
+  const hasAccess = await hasAccessToBoard(user.id, board.id);
+  if (!hasAccess) redirect("/join");
+
+  await db.update(cards).set({ title: newTitle ?? "Untitled" }).where(eq(cards.id, cardId));
+
+  revalidatePath(`/board/${board.id}`);
+};
+
+export const createCardAction = async (boardId: string) => {
   await db.insert(cards).values({ title: "New card", boardId });
   revalidatePath(`/board/${boardId}`);
 };

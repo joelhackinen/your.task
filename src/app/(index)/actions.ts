@@ -98,7 +98,10 @@ export const joinBoardAction = async (
   if (!validationResult.success) {
     return {
       data: boardData,
-      errors: validationResult.error.flatten().fieldErrors,
+      errors: {
+        id: ["Invalid credentials"],
+        password: ["Invalid credentials"],
+      },
     };
   }
   const { id, password } = validationResult.data;

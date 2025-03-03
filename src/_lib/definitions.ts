@@ -16,7 +16,7 @@ export const CreateBoardFormSchema = z.object({
 });
 
 export const JoinBoardFormSchema = z.object({
-  id: z.string().min(1, "You must enter an ID"),
+  id: z.string().uuid(),
   password: z.string(),
 });
 
