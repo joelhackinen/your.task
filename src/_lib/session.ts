@@ -3,23 +3,23 @@ import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const key = new TextEncoder().encode("asd");
+const key = new TextEncoder().encode(process.env.JWT_SECRET!);
 
 const cookieOptions = {
   name: "session",
   options: { httpOnly: true, secure: true, sameSite: "lax", path: "/" },
-  duration: 7 * 24 * 60 * 1000,
+  duration: 60 * 60 * 1000,
 };
 
 export const encrypt = async (payload: JWTPayload) => (
   new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1 week")
+    .setExpirationTime("1h")
     .sign(key)
 );
 
-export const decrypt = async (token: string) => {
+const decrypt = async (token: string) => {
   try {
     const { payload } = await jwtVerify(token, key, {
       algorithms: ["HS256"],

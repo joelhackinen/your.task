@@ -1,6 +1,5 @@
-import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import { decrypt } from "@/_lib/session";
+import { verifySession } from "@/_lib/session";
 
 
 const PROTECTED_ROUTES = [
@@ -16,14 +15,13 @@ const middleware = async (req: NextRequest) => {
   const isProtectedRoute = PROTECTED_ROUTES.includes(path);
   const isPublicRoute = PUBLIC_ROUTES.includes(path);
 
-  const cookie = (await cookies()).get("session")?.value;
-  const userId = (await decrypt(cookie))?.sub;
+  const session = await verifySession();
 
-  if (isProtectedRoute && !userId) {
+  if (isProtectedRoute && (!session || !session.userId)) {
     return NextResponse.redirect(new URL("/join", req.nextUrl));
   }
 
-  if (isPublicRoute && userId) {
+  if (isPublicRoute && session) {
     return NextResponse.redirect(new URL("/", req.nextUrl));
   }
 
