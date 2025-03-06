@@ -1,11 +1,5 @@
 FROM node:22-alpine AS base
 
-ARG JWT_SECRET
-ENV JWT_SECRET=${JWT_SECRET}
-
-ARG POSTGRES_URL
-ENV POSTGRES_URL=${POSTGRES_URL}
-
 # Stage 1: Install dependencies
 FROM base AS deps
 WORKDIR /app

@@ -24,6 +24,6 @@ jobs:
       - name: Deploy
         run: |
           flyctl deploy \
-            --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            --build-arg POSTGRES_URL=${{ secrets.POSTGRES_URL }} \
+            --build-secret JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --build-secret POSTGRES_URL=${{ secrets.POSTGRES_URL }} \
             --remote-only
