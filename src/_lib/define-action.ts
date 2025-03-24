@@ -2,7 +2,7 @@ import type { z } from "zod";
 
 type ActionStateSuccess<T extends z.ZodTypeAny> = {
   success: true;
-  data?: z.infer<T>;
+  inputs?: z.infer<T>;
   message?: string;
 }
 

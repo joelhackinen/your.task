@@ -1,6 +1,6 @@
 "use client";
 
-import type { ActionState } from "@/_lib/definitions";
+import type { ActionState } from "@lib/define-action";
 import { cn } from "@/_lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +22,6 @@ import { PlusCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
-export type AddTaskActionState = ActionState<{
-  title: string;
-  cardId: string;
-  description: string;
-  keepAdding: string | null;
-}>;
 
 export const AddTaskForm = ({
   cards,

@@ -4,43 +4,24 @@ import { getBoardByCardId, getUser, hasAccessToBoard } from "@/_data/user";
 import { AddTaskFormSchema } from "@/_lib/definitions";
 import { db } from "@/_lib/db"; 
 import { cards, tasks } from "@/_lib/db/schema";
-import type { AddTaskActionState } from "./add-task-form";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
+import { defineAction } from "@/_lib/define-action";
 
-export const addTaskAction = async (_: AddTaskActionState, formData: FormData) => {  
-  const taskData = {
-    title: formData.get("title") ?? "",
-    description: formData.get("description") ?? "",
-    cardId: formData.get("cardId") ?? "",
-    keepAdding: formData.get("keep-adding"),
-  };
-
+export const addTask = defineAction(AddTaskFormSchema, async (_prev, validatedData) => {
+  const { cardId, title, description } = validatedData;
   const user = await getUser();
   
   if (!user) {
-    return {
-      data: taskData,
-      message: "You need to be logged in!"
-    };
+    redirect("/login");
   }
 
-  const board = await getBoardByCardId(taskData.cardId as string);
+  const board = await getBoardByCardId(cardId);
   if (!board) redirect("/");
 
   const hasAccess = await hasAccessToBoard(user.id, board.id);
   if (!hasAccess) redirect("/");
-
-  // validate input
-  const validationResult = AddTaskFormSchema.safeParse(taskData);
-  if (!validationResult.success) {
-    return {
-      data: taskData,
-      errors: validationResult.error.flatten().fieldErrors,
-    };
-  }
-  const { cardId, title, description } = validationResult.data;
 
   // add task to the card
   await db.insert(tasks).values({
@@ -54,14 +35,19 @@ export const addTaskAction = async (_: AddTaskActionState, formData: FormData) =
 
   // reset title and description
   return {
-    data: {
+    success: true,
+    inputs: {
       title: "",
       description: "",
-      cardId: taskData.cardId,
-      keepAdding: taskData.keepAdding,
+      cardId: cardId,
+      keepAdding: keepAdding,
     },
     message: "Task " + title + " added successfully!"
   };
+});
+
+export const addTaskAction = async (_: AddTaskActionState, formData: FormData) => {  
+  
 };
 
 export const deleteTaskAction = async (taskId: string, cardId: string) => {
