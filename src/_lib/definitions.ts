@@ -1,23 +1,5 @@
 import { z } from "zod";
 
-type ActionStateSuccess<T extends z.ZodTypeAny> = {
-  data?: z.infer<T>;
-  success: true;
-  message?: string;
-}
-
-type ActionStateError<T extends z.ZodTypeAny> = {
-  data?: z.infer<T>;
-  fieldErrors?: {
-    [K in keyof z.infer<T>]?: string[];
-  };
-  formError?: string;
-  success: false;
-  message?: string;
-}
-
-export type ActionState<T extends z.ZodTypeAny> = ActionStateError<T> | ActionStateSuccess<T> | undefined;
-
 export const CreateBoardFormSchema = z.object({
   name: z.string().min(1, "You must enter a name"),
   password: z.string(),

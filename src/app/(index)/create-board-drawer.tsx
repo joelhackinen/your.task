@@ -19,6 +19,9 @@ import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { createBoardAction } from "./actions";
 import { useToast } from "@/hooks/use-toast";
+import { InputErrors } from "@/components/input-errors";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 export const CreateBoardDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -60,13 +63,27 @@ const CreateBoardForm = ({
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state?.message) {
-      toast({
-        title: state.message,
-      });
+    if (state?.success) {
+      if (state.message) {
+        toast({
+          title: state.message,
+        });
+      }
       drawerRef.current.click();
     }
-  }, [state, toast, drawerRef]);
+  }, [state?.success, state?.message, toast, drawerRef]);
+
+  const fieldErrors = !state?.success
+    ? state?.fieldErrors
+    : undefined;
+  
+  const inputs = !state?.success
+    ? state?.inputs
+    : undefined;
+
+  const formError = !state?.success
+    ? state?.formError
+    : undefined;
 
   return (
     <form
@@ -75,18 +92,21 @@ const CreateBoardForm = ({
     >
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
-        <Input name="name" id="boardName" placeholder="your.task" defaultValue={state?.data?.name as string} autoComplete="off" />
-        {state?.fieldErrors?.name &&
-          <p className="text-red-500 text-sm">{state.fieldErrors.name}</p>
-        }
+        <Input name="name" id="boardName" placeholder="your.task" defaultValue={inputs?.name as string} autoComplete="off" />
+        <InputErrors errors={fieldErrors?.name} />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
-        <Input name="password" type="password" id="password" defaultValue={state?.data?.password as string} autoComplete="off" />
-        {state?.fieldErrors?.password &&
-          <p className="text-red-500 text-sm">{state.fieldErrors.password}</p>
-        }
+        <Input name="password" type="password" id="password" defaultValue={inputs?.password as string} autoComplete="off" />
+        <InputErrors errors={fieldErrors?.password} />
       </div>
+      <Alert variant="destructive" className={cn(!formError && "hidden")}>
+        <AlertCircleIcon className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          {formError}
+        </AlertDescription>
+      </Alert>
       <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
         <span className={cn("[grid-area:stack]", pending && "invisible")}>Create🚀</span>
         <span className={cn("[grid-area:stack]", !pending && "invisible")}>Creating a board...</span>

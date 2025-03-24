@@ -24,8 +24,8 @@ const IndexPage = () => {
           <div className="flex flex-col gap-y-2 w-28 mx-auto">
             <Skeleton className="h-10" />
             <Skeleton className="h-10" />
-          </div>)
-        }>
+          </div>
+        )}>
           <Buttons />
         </Suspense>
         <Suspense fallback={(<div>Who are you...</div>)}>

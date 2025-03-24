@@ -9,7 +9,7 @@ import { createSession } from "../../_lib/session";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { QueryResultError, QueryResultSuccess } from "@/_lib/QueryResult";
-import { defineAction } from "@/_lib/utils";
+import { defineAction } from "@/_lib/define-action";
 
 export const signUpAction = defineAction(SignUpFormSchema, async (_prev, validatedData) => {
   const { username, password } = validatedData;
@@ -24,7 +24,7 @@ export const signUpAction = defineAction(SignUpFormSchema, async (_prev, validat
   
   if (!result.success) {
     return {
-      data: validatedData,
+      inputs: validatedData,
       fieldErrors: {
         username: ["This username is already in use"],
       },
@@ -50,11 +50,8 @@ export const loginAction = defineAction(LoginFormSchema, async (_prev, validated
   
   if (!result.success) {
     return {
-      data: validatedData,
-      fieldErrors: {
-        username: ["Unknown error"],
-        password: ["Unknown error"],
-      },
+      inputs: validatedData,
+      formError: "Unknown error",
       success: false,
     };
   }
@@ -63,11 +60,8 @@ export const loginAction = defineAction(LoginFormSchema, async (_prev, validated
 
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return {
-      data: validatedData,
-      fieldErrors: {
-        username: ["Invalid credentials"],
-        password: ["Invalid credentials"],
-      },
+      inputs: validatedData,
+      formError: "Invalid credentials",
       success: false,
     };
   }

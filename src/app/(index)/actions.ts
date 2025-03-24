@@ -8,23 +8,19 @@ import { getUser } from "@/_data/user";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
-import { defineAction } from "@/_lib/utils";
+import { defineAction } from "@/_lib/define-action";
+import { redirect } from "next/navigation";
 
 export const createBoardAction = defineAction(CreateBoardFormSchema, async (_prev, validatedData) => {
   const user = await getUser();
 
   if (!user) {
-    return {
-      data: validatedData,
-      message: "You need to be logged in!",
-      success: false,
-    };
+    redirect("/join");
   }
 
   const { name, password } = validatedData;
 
   const passwordHash = await bcrypt.hash(password, 10);
-
   const insertResult = await db.insert(boards).values({
     name,
     passwordHash
@@ -65,11 +61,7 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
   const user = await getUser();
 
   if (!user) {
-    return {
-      data: validatedData,
-      message: "You need to be logged in!",
-      success: false,
-    };
+    redirect("/join");
   }
 
   const { id, password } = validatedData;
@@ -81,18 +73,18 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
   
   if (!board) {
     return {
-      data: validatedData,
       fieldErrors: {
         id: ["Invalid credentials"],
         password: ["Invalid credentials"],
       },
       success: false,
+      inputs: validatedData,
     };
   }
 
   if (board.passwordHash && !(await bcrypt.compare(password, board.passwordHash))) {
     return {
-      data: validatedData,
+      inputs: validatedData,
       fieldErrors: {
         id: ["Invalid credentials"],
         password: ["Invalid credentials"],
@@ -108,7 +100,7 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
   } catch (err) {
     if (err instanceof postgres.PostgresError && err.code == "23505") {
       return {
-        data: validatedData,
+        inputs: validatedData,
         fieldErrors: {
           id: ["You already belong to this board"],
         },
@@ -116,11 +108,8 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
       };
     }
     return {
-      data: validatedData,
-      fieldErrors: {
-        id: ["Error creating a board"],
-        password: ["Error creating a board"],
-      },
+      inputs: validatedData,
+      formError: "An error happened when creating a board. Try again!",
       success: false,
     };
   }

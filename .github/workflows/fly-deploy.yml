@@ -18,6 +18,19 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Push schema
+        run: npx drizzle-kit push --force
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Setup flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
       
@@ -25,5 +38,5 @@ jobs:
         run: |
           flyctl deploy \
             --build-secret JWT_SECRET=${{ secrets.JWT_SECRET }} \
-            --build-secret POSTGRES_URL=${{ secrets.POSTGRES_URL }} \
+            --build-secret DATABASE_URL=${{ secrets.DATABASE_URL }} \
             --remote-only

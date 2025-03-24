@@ -6,26 +6,36 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/_lib/utils";
 import { useActionState } from "react";
 import { signUpAction } from "./actions";
+import { InputErrors } from "@/components/input-errors";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
 
 export const SignUpForm = () => {
   const [state, signUp, pending] = useActionState(signUpAction, undefined);
+
+  const fieldErrors = !state?.success ? state?.fieldErrors : undefined;
+  const formError = !state?.success ? state?.formError : undefined;
+  const inputs = !state?.success ? state?.inputs : undefined;
 
   return (
     <form className="space-y-2" action={signUp}>
       <div className="space-y-1">
         <Label htmlFor="username">Username</Label>
-        <Input id="username" name="username" defaultValue={state?.data?.username as string} autoComplete="off" />
-        {state?.fieldErrors?.username &&
-          <p className="text-red-500 text-sm">{state.fieldErrors.username}</p>
-        }
+        <Input id="username" name="username" defaultValue={inputs?.username as string} autoComplete="off" />
+        <InputErrors errors={fieldErrors?.username} />
       </div>
       <div className="space-y-1">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" name="password" defaultValue={state?.data?.password as string} autoComplete="off" />
-        {state?.fieldErrors?.password &&
-          <p className="text-red-500 text-sm">{state.fieldErrors.password}</p>
-        }
+        <Input id="password" type="password" name="password" defaultValue={inputs?.password as string} autoComplete="off" />
+        <InputErrors errors={fieldErrors?.password} />
       </div>
+      <Alert variant="destructive" className={cn(!formError && "hidden")}>
+        <AlertCircleIcon className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          {formError}
+        </AlertDescription>
+      </Alert>
       <Button className="grid [grid-template-areas:'stack']">
         <span className={cn("[grid-area:stack]", pending && "invisible")}>
           Sign up🚀

@@ -11,9 +11,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN --mount=type=secret,id=POSTGRES_URL \
+RUN --mount=type=secret,id=DATABASE_URL \
     --mount=type=secret,id=JWT_SECRET \
-    POSTGRES_URL="$(cat /run/secrets/POSTGRES_URL)" \
+    DATABASE_URL="$(cat /run/secrets/DATABASE_URL)" \
     JWT_SECRET="$(cat /run/secrets/JWT_SECRET)" \
     npm run build
 

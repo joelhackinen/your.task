@@ -45,7 +45,7 @@ export const BoardListItem = ({
       </Link>
       <div className="italic text-gray-500 flex items-center text-sm gap-x-1">
         <div>
-          ...
+          <span>...</span>
           <span className="font-[family-name:var(--font-geist-mono)]">
             {boardId.slice(-4)}
           </span>
