@@ -16,7 +16,6 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { joinBoardAction } from "./actions";
-import type { ActionState } from "@/_lib/definitions";
 import { useActionState, useEffect, useRef, useState, type ComponentProps, type ComponentRef, type RefObject } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -47,11 +46,6 @@ export const JoinBoardDrawer = () => {
   );
 };
 
-export type JoinBoardActionState = ActionState<{
-  id: string;
-  password: string;
-}>;
-
 interface JoinBoardFormProps extends ComponentProps<"form"> {
   drawerRef: RefObject<HTMLButtonElement>
 }
@@ -74,15 +68,15 @@ const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
       <div className="grid gap-2">
         <Label htmlFor="boardIdField">Board ID</Label>
         <Input id="boardIdField" name="id" defaultValue={state?.data?.id as string} autoComplete="off" />
-        {state?.errors?.id &&
-          <p className="text-red-500 text-sm">{state.errors.id}</p>
+        {state?.fieldErrors?.id &&
+          <p className="text-red-500 text-sm">{state.fieldErrors.id}</p>
         }
       </div>
       <div className="grid gap-2">
         <Label htmlFor="boardPasswordField">Password</Label>
         <Input type="password" id="boardPasswordField" name="password" defaultValue={state?.data?.password as string} autoComplete="off" />
-        {state?.errors?.password &&
-          <p className="text-red-500 text-sm">{state.errors.password}</p>
+        {state?.fieldErrors?.password &&
+          <p className="text-red-500 text-sm">{state.fieldErrors.password}</p>
         }
       </div>
       <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">

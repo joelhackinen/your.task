@@ -1,8 +1,7 @@
 "use server";
 
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { LoginFormSchema, SignUpFormSchema } from "../../_lib/definitions";
-import type { SignUpActionState } from "./signup-form";
 import { db } from "@/_lib/db";
 import { users } from "@/_lib/db/schema";
 import { PostgresError } from "postgres";
@@ -10,22 +9,10 @@ import { createSession } from "../../_lib/session";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { QueryResultError, QueryResultSuccess } from "@/_lib/QueryResult";
+import { defineAction } from "@/_lib/utils";
 
-
-export const signUpAction = async (_: SignUpActionState, formData: FormData) => {
-  const data = {
-    username: formData.get("username"),
-    password: formData.get("password"),
-  };
-  const validationResult = SignUpFormSchema.safeParse(data);
-
-  if (!validationResult.success) {
-    return {
-      data,
-      errors: validationResult.error.flatten().fieldErrors,
-    };
-  }
-  const { username, password } = validationResult.data;
+export const signUpAction = defineAction(SignUpFormSchema, async (_prev, validatedData) => {
+  const { username, password } = validatedData;
   const passwordHash = await bcrypt.hash(password, 10);
 
   const result = await db
@@ -37,10 +24,11 @@ export const signUpAction = async (_: SignUpActionState, formData: FormData) => 
   
   if (!result.success) {
     return {
-      data,
-      errors: {
+      data: validatedData,
+      fieldErrors: {
         username: ["This username is already in use"],
       },
+      success: false,
     };
   }
   
@@ -48,23 +36,10 @@ export const signUpAction = async (_: SignUpActionState, formData: FormData) => 
   await createSession(user.id);
 
   redirect("/");
-};
+});
 
-export const loginAction = async (_: SignUpActionState, formData: FormData) => {
-  const data = {
-    username: formData.get("username"),
-    password: formData.get("password"),
-  };
-  const validationResult = LoginFormSchema.safeParse(data);
-
-  if (!validationResult.success) {
-    return {
-      data,
-      errors: validationResult.error.flatten().fieldErrors,
-    };
-  }
-
-  const { username, password } = validationResult.data;
+export const loginAction = defineAction(LoginFormSchema, async (_prev, validatedData) => {
+  const { username, password } = validatedData;
 
   const result = await db
     .select()
@@ -75,11 +50,12 @@ export const loginAction = async (_: SignUpActionState, formData: FormData) => {
   
   if (!result.success) {
     return {
-      data,
-      errors: {
+      data: validatedData,
+      fieldErrors: {
         username: ["Unknown error"],
         password: ["Unknown error"],
       },
+      success: false,
     };
   }
 
@@ -87,15 +63,16 @@ export const loginAction = async (_: SignUpActionState, formData: FormData) => {
 
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return {
-      data,
-      errors: {
+      data: validatedData,
+      fieldErrors: {
         username: ["Invalid credentials"],
         password: ["Invalid credentials"],
       },
+      success: false,
     };
   }
 
   await createSession(user.id);
 
   redirect("/");
-};
+});

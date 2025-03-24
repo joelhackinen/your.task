@@ -19,7 +19,6 @@ import { Input } from "../../components/ui/input";
 import { cn } from "@/_lib/utils";
 import { createBoardAction } from "./actions";
 import { useToast } from "@/hooks/use-toast";
-import type { ActionState } from "@/_lib/definitions";
 
 export const CreateBoardDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -49,11 +48,6 @@ export const CreateBoardDrawer = () => {
   );
 };
 
-export type CreateBoardActionState = ActionState<{
-  name: string;
-  password: string;
-}>;
-
 interface CreateBoardFormProps extends ComponentProps<"form"> {
   drawerRef: RefObject<HTMLButtonElement>
 }
@@ -82,15 +76,15 @@ const CreateBoardForm = ({
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
         <Input name="name" id="boardName" placeholder="your.task" defaultValue={state?.data?.name as string} autoComplete="off" />
-        {state?.errors?.name &&
-          <p className="text-red-500 text-sm">{state.errors.name}</p>
+        {state?.fieldErrors?.name &&
+          <p className="text-red-500 text-sm">{state.fieldErrors.name}</p>
         }
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
         <Input name="password" type="password" id="password" defaultValue={state?.data?.password as string} autoComplete="off" />
-        {state?.errors?.password &&
-          <p className="text-red-500 text-sm">{state.errors.password}</p>
+        {state?.fieldErrors?.password &&
+          <p className="text-red-500 text-sm">{state.fieldErrors.password}</p>
         }
       </div>
       <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">

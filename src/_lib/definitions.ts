@@ -1,14 +1,22 @@
 import { z } from "zod";
 
-export type ActionState<TFields extends Record<string, unknown>> = {
-  data?: {
-    [K in keyof TFields]: FormDataEntryValue | null;
-  };
-  errors?: {
-    [K in keyof TFields]?: string[];
-  };
+type ActionStateSuccess<T extends z.ZodTypeAny> = {
+  data?: z.infer<T>;
+  success: true;
   message?: string;
-} | undefined
+}
+
+type ActionStateError<T extends z.ZodTypeAny> = {
+  data?: z.infer<T>;
+  fieldErrors?: {
+    [K in keyof z.infer<T>]?: string[];
+  };
+  formError?: string;
+  success: false;
+  message?: string;
+}
+
+export type ActionState<T extends z.ZodTypeAny> = ActionStateError<T> | ActionStateSuccess<T> | undefined;
 
 export const CreateBoardFormSchema = z.object({
   name: z.string().min(1, "You must enter a name"),

@@ -1,7 +1,7 @@
 services: 
   database:
-    container_name: postgres-dev
-    image: postgres:17.2-alpine
+    container_name: postgres-yourtask
+    image: postgres:16-alpine3.20
     restart: "no"
     ports:
       - "5432:5432"
