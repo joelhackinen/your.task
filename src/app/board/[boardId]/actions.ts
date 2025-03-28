@@ -9,13 +9,11 @@ import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { defineAction } from "@/_lib/define-action";
 
-export const addTask = defineAction(AddTaskFormSchema, async (_prev, validatedData) => {
+export const addTaskAction = defineAction(AddTaskFormSchema, async (_prev, validatedData, success) => {
   const { cardId, title, description } = validatedData;
   const user = await getUser();
   
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/join");
 
   const board = await getBoardByCardId(cardId);
   if (!board) redirect("/");
@@ -34,21 +32,13 @@ export const addTask = defineAction(AddTaskFormSchema, async (_prev, validatedDa
   revalidatePath(`/board/${board.id}`);
 
   // reset title and description
-  return {
-    success: true,
-    inputs: {
-      title: "",
-      description: "",
-      cardId: cardId,
-      keepAdding: keepAdding,
-    },
-    message: "Task " + title + " added successfully!"
-  };
+  return success({
+    title: "",
+    description: "",
+    cardId,
+  });
 });
 
-export const addTaskAction = async (_: AddTaskActionState, formData: FormData) => {  
-  
-};
 
 export const deleteTaskAction = async (taskId: string, cardId: string) => {
   const user = await getUser();

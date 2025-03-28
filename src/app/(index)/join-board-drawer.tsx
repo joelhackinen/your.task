@@ -19,8 +19,8 @@ import { joinBoardAction } from "./actions";
 import { useActionState, useEffect, useRef, useState, type ComponentProps, type ComponentRef, type RefObject } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { InputErrors } from "@/components/input-errors";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { FormError } from "@/components/form-error";
+import { SubmitButton } from "@/components/submit-button";
 
 export const JoinBoardDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -54,47 +54,34 @@ interface JoinBoardFormProps extends ComponentProps<"form"> {
 }
 
 const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
-  const [state, joinBoard, pending] = useActionState(joinBoardAction, undefined);
+  const [state, joinBoard, _pending] = useActionState(joinBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
     if (state?.success) {
-      if (state.message) {
-        toast({
-          title: state.message,
-        });
-      }
+      toast({
+        title: "Joined successfully",
+      });
       drawerRef.current.click();
     }
-  }, [state?.success, state?.message, toast, drawerRef]);
+  }, [state?.success, toast, drawerRef]);
 
-  const fieldErrors = !state?.success ? state?.fieldErrors : {};
-  const inputs = !state?.success ? state?.inputs : {};
   const formError = !state?.success ? state?.formError : null;
   
   return (
     <form className={cn("grid items-start gap-4", className)} action={joinBoard}>
       <div className="grid gap-2">
         <Label htmlFor="boardIdField">Board ID</Label>
-        <Input id="boardIdField" name="id" defaultValue={inputs?.id as string} autoComplete="off" />
-        <InputErrors errors={fieldErrors?.id} />
+        <Input id="boardIdField" name="id" defaultValue={state?.inputs.id} autoComplete="off" />
+        {!state?.success && <InputErrors errors={state?.fieldErrors?.id} />}
       </div>
       <div className="grid gap-2">
         <Label htmlFor="boardPasswordField">Password</Label>
-        <Input type="password" id="boardPasswordField" name="password" defaultValue={inputs?.password as string} autoComplete="off" />
-        <InputErrors errors={fieldErrors?.password} />
+        <Input type="password" id="boardPasswordField" name="password" defaultValue={state?.inputs.password} autoComplete="off" />
+        {!state?.success && <InputErrors errors={state?.fieldErrors?.password} />}
       </div>
-      <Alert variant="destructive" className={cn(!formError && "hidden")}>
-        <AlertCircleIcon className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          {formError}
-        </AlertDescription>
-      </Alert>
-      <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
-        <span className={cn("[grid-area:stack]", pending && "invisible")}>Create🚀</span>
-        <span className={cn("[grid-area:stack]", !pending && "invisible")}>Creating a board...</span>
-      </Button>
+      {formError && <FormError error={formError} />}
+      <SubmitButton className="w-36" text="Create🚀" pendingText="Creating a board..." />
     </form>
   );
 };

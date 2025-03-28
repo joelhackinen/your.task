@@ -1,10 +1,17 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "./schema";
+import { createNeonClient } from "./clients/neon";
+import { createPostgresJsClient } from "./clients/postgresjs";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
+declare global {
+  // eslint-disable-next-line no-var
+  var cachedDbClient: ReturnType<typeof createPostgresJsClient> | undefined;
 }
 
-export const client = postgres(process.env.DATABASE_URL);
-export const db = drizzle(client, { casing: "snake_case", schema });
+const isDeployment = !!process.env.FLY_APP_NAME;
+
+if (!isDeployment) {
+  globalThis.cachedDbClient ??= createPostgresJsClient();
+}
+
+export const db = isDeployment
+  ? createNeonClient()
+  : globalThis.cachedDbClient!;

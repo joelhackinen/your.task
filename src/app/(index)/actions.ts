@@ -11,12 +11,10 @@ import postgres from "postgres";
 import { defineAction } from "@/_lib/define-action";
 import { redirect } from "next/navigation";
 
-export const createBoardAction = defineAction(CreateBoardFormSchema, async (_prev, validatedData) => {
+export const createBoardAction = defineAction(CreateBoardFormSchema, async (_prev, validatedData, success) => {
   const user = await getUser();
 
-  if (!user) {
-    redirect("/join");
-  }
+  if (!user) redirect("/join");
 
   const { name, password } = validatedData;
 
@@ -51,18 +49,13 @@ export const createBoardAction = defineAction(CreateBoardFormSchema, async (_pre
 
   revalidatePath("/");
 
-  return {
-    message: `Board ${name} created!`,
-    success: true,
-  };
+  return success();
 });
 
-export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, validatedData) => {
+export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, validatedData, success, error) => {
   const user = await getUser();
 
-  if (!user) {
-    redirect("/join");
-  }
+  if (!user) redirect("/join");
 
   const { id, password } = validatedData;
 
@@ -72,25 +65,15 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
     .where(eq(boards.id, id));
   
   if (!board) {
-    return {
-      fieldErrors: {
-        id: ["Invalid credentials"],
-        password: ["Invalid credentials"],
-      },
-      success: false,
-      inputs: validatedData,
-    };
+    return error({
+      formError: "Invalid credentials",
+    });
   }
 
   if (board.passwordHash && !(await bcrypt.compare(password, board.passwordHash))) {
-    return {
-      inputs: validatedData,
-      fieldErrors: {
-        id: ["Invalid credentials"],
-        password: ["Invalid credentials"],
-      },
-      success: false,
-    };
+    return error({
+      formError: "Invalid credentials",
+    });
   }
   // handle duplicate composite pkey
   try {
@@ -99,21 +82,17 @@ export const joinBoardAction = defineAction(JoinBoardFormSchema, async (_prev, v
       .values({ userId: user.id, boardId: board.id, boardName: board.name });
   } catch (err) {
     if (err instanceof postgres.PostgresError && err.code == "23505") {
-      return {
-        inputs: validatedData,
+      return error({
         fieldErrors: {
           id: ["You already belong to this board"],
         },
-        success: false,
-      };
+      });
     }
-    return {
-      inputs: validatedData,
+    return error({
       formError: "An error happened when creating a board. Try again!",
-      success: false,
-    };
+    });
   }
   revalidatePath("/");
 
-  return { message: `Joined ${board.name} succesfully!`, success: true, };
+  return success();
 });

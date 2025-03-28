@@ -1,13 +1,11 @@
 "use client";
 
-import type { ActionState } from "@lib/define-action";
-import { cn } from "@/_lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { CardType } from "@/_lib/db/schema";
-import { type ComponentRef, useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect } from "react";
 import { addTaskAction } from "./actions";
 import {
   Dialog,
@@ -21,6 +19,8 @@ import {
 import { PlusCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { InputErrors } from "@/components/input-errors";
+import { SubmitButton } from "@/components/submit-button";
 
 
 export const AddTaskForm = ({
@@ -30,25 +30,22 @@ export const AddTaskForm = ({
   cards: CardType[],
   cardId: string,
 }) => {
-  const closeDialogRef = useRef<ComponentRef<typeof DialogClose>>(null);
-  const [state, addTask, pending] = useActionState(addTaskAction, undefined);
-  const cardName = cards.find(c => c.id === cardId)?.title;
+  const [state, addTask, _pending] = useActionState(addTaskAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state?.message) {
+    if (state?.success) {
       toast({
-        title: state.message,
+        title: `Added ${state.inputs.title} succesfully`,
       });
-      if (!state.data?.keepAdding) closeDialogRef.current?.click();
     }
-  }, [state, toast]);
+  }, [state?.success, state?.inputs.title, toast]);
 
   return (
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="ghost" aria-label={`Add new task to ${cardName}`}>
+          <Button variant="ghost" aria-label={`Add new task`} >
             <PlusCircle />
             <span>Add item</span>
           </Button>
@@ -63,7 +60,7 @@ export const AddTaskForm = ({
           <form className="flex flex-col gap-2" action={addTask}>
             <div>
               <Label className="font-semibold" htmlFor="cardId">Card</Label>
-              <Select defaultValue={state?.data?.cardId as string || cardId} name="cardId">
+              <Select defaultValue={state?.inputs.cardId || cardId} name="cardId">
                 <SelectTrigger id="cardId">
                   <SelectValue />
                 </SelectTrigger>
@@ -76,26 +73,17 @@ export const AddTaskForm = ({
             </div>
             <div>
               <Label className="font-semibold" htmlFor="title">Title</Label>
-              <Input id="title" name="title" defaultValue={state?.data?.title as string} />
-              {state?.errors?.title &&
-                <p className="text-red-500 text-sm">{state.errors.title}</p>
-              }
+              <Input id="title" name="title" defaultValue={state?.inputs.title} />
+              {!state?.success && <InputErrors errors={state?.fieldErrors?.title} />}
             </div>
             <div>
               <Label className="font-semibold" htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" defaultValue={state?.data?.description as string} />
-            </div>
-            <div className="flex items-center gap-2">
-              <input id="keep-adding" type="checkbox" name="keep-adding" defaultChecked={!!state?.data?.keepAdding} />
-              <Label htmlFor="keep-adding" className="font-semibold">Keep adding</Label>
+              <Textarea id="description" name="description" defaultValue={state?.inputs.description} />
             </div>
             <div className="flex justify-between items-center">
-              <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
-                <span className={cn("[grid-area:stack]", pending && "invisible")}>Add🚀</span>
-                <span className={cn("[grid-area:stack]", !pending && "invisible")}>Adding...</span>
-              </Button>
-              <DialogClose asChild ref={closeDialogRef}>
-                <Button variant="outline">Close</Button>
+              <SubmitButton text="Add🚀" pendingText="Adding..." />
+              <DialogClose asChild>
+                <Button type="button" variant="outline">Close</Button>
               </DialogClose>
             </div>
           </form>

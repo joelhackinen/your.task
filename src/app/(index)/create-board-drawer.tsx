@@ -20,8 +20,8 @@ import { cn } from "@/_lib/utils";
 import { createBoardAction } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 import { InputErrors } from "@/components/input-errors";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { FormError } from "@/components/form-error";
+import { SubmitButton } from "@/components/submit-button";
 
 export const CreateBoardDrawer = () => {
   const [open, setOpen] = useState(false);
@@ -59,27 +59,17 @@ const CreateBoardForm = ({
   className,
   drawerRef,
 }: CreateBoardFormProps) => {
-  const [state, createBoard, pending] = useActionState(createBoardAction, undefined);
+  const [state, createBoard, _pending] = useActionState(createBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
     if (state?.success) {
-      if (state.message) {
-        toast({
-          title: state.message,
-        });
-      }
+      toast({
+        title: `Board "${state.inputs.name}" created successfully.`,
+      });
       drawerRef.current.click();
     }
-  }, [state?.success, state?.message, toast, drawerRef]);
-
-  const fieldErrors = !state?.success
-    ? state?.fieldErrors
-    : undefined;
-  
-  const inputs = !state?.success
-    ? state?.inputs
-    : undefined;
+  }, [state?.success, toast, drawerRef]);
 
   const formError = !state?.success
     ? state?.formError
@@ -92,25 +82,16 @@ const CreateBoardForm = ({
     >
       <div className="grid gap-2">
         <Label htmlFor="boardName">Board name</Label>
-        <Input name="name" id="boardName" placeholder="your.task" defaultValue={inputs?.name as string} autoComplete="off" />
-        <InputErrors errors={fieldErrors?.name} />
+        <Input name="name" id="boardName" placeholder="your.task" defaultValue={state?.inputs.name} autoComplete="off" />
+        {!state?.success && <InputErrors errors={state?.fieldErrors?.name} />}
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Protect the board with password (leave empty if not needed)</Label>
-        <Input name="password" type="password" id="password" defaultValue={inputs?.password as string} autoComplete="off" />
-        <InputErrors errors={fieldErrors?.password} />
+        <Input name="password" type="password" id="password" defaultValue={state?.inputs.password} autoComplete="off" />
+        {!state?.success && <InputErrors errors={state?.fieldErrors?.password} />}
       </div>
-      <Alert variant="destructive" className={cn(!formError && "hidden")}>
-        <AlertCircleIcon className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>
-          {formError}
-        </AlertDescription>
-      </Alert>
-      <Button className="grid [grid-template-areas:'stack'] w-fit" type="submit">
-        <span className={cn("[grid-area:stack]", pending && "invisible")}>Create🚀</span>
-        <span className={cn("[grid-area:stack]", !pending && "invisible")}>Creating a board...</span>
-      </Button>
+      {formError && <FormError error={formError} />}
+      <SubmitButton className="w-36" text="Create🚀" pendingText="Creating a board..." />
     </form>
   );
 };
