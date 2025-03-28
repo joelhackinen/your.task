@@ -54,7 +54,7 @@ interface JoinBoardFormProps extends ComponentProps<"form"> {
 }
 
 const JoinBoardForm = ({ className, drawerRef }: JoinBoardFormProps) => {
-  const [state, joinBoard, _pending] = useActionState(joinBoardAction, undefined);
+  const [state, joinBoard] = useActionState(joinBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {

@@ -14,5 +14,5 @@ export function FormError({
         {error}
       </AlertDescription>
     </Alert>
-  )
+  );
 }

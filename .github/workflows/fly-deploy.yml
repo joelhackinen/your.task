@@ -10,9 +10,12 @@ env:
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
 jobs:
-  type-checking:
-    name: Type Checking
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        validation: ["typecheck", "lint"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -21,16 +24,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Check types
-        run: npm run typecheck
+      - name: Run validation
+        run: npm run ${{ matrix.validation }}
 
   deploy:
     name: Deploy app
-    needs: [type-checking]
+    needs: [validate]
     runs-on: ubuntu-latest
     concurrency: deploy-group    # optional: ensure only one action runs at a time
     steps:

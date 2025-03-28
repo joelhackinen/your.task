@@ -30,7 +30,7 @@ export const AddTaskForm = ({
   cards: CardType[],
   cardId: string,
 }) => {
-  const [state, addTask, _pending] = useActionState(addTaskAction, undefined);
+  const [state, addTask] = useActionState(addTaskAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {

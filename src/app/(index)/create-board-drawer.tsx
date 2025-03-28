@@ -59,7 +59,7 @@ const CreateBoardForm = ({
   className,
   drawerRef,
 }: CreateBoardFormProps) => {
-  const [state, createBoard, _pending] = useActionState(createBoardAction, undefined);
+  const [state, createBoard] = useActionState(createBoardAction, undefined);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const CreateBoardForm = ({
       });
       drawerRef.current.click();
     }
-  }, [state?.success, toast, drawerRef]);
+  }, [state?.success, state?.inputs.name, toast, drawerRef]);
 
   const formError = !state?.success
     ? state?.formError

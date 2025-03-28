@@ -9,7 +9,7 @@ import { FormError } from "@/components/form-error";
 import { SubmitButton } from "@/components/submit-button";
 
 export const LoginForm = () => {
-  const [state, login, _pending] = useActionState(loginAction, undefined);
+  const [state, login] = useActionState(loginAction, undefined);
 
   const formError = !state?.success ? state?.formError : undefined;
   
