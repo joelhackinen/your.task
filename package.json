@@ -9,7 +9,9 @@
     "lint": "next lint",
     "typecheck": "tsc --pretty --noEmit",
     "db:migrate": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:seed": "npx tsx src/_lib/db/seed.ts",
+    "db:studio": "drizzle-kit studio",
+    "db:reset": "docker compose down && docker compose up -d"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

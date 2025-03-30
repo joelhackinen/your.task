@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, } from "react";
+import React, { use, useState, } from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -14,13 +14,15 @@ import {
 } from "@dnd-kit/core";
 
 import { Container } from "./container";
+import type { getBoardData } from "@/_data/board";
 
-export default function Page() {
-  const [items, setItems] = useState([
-    { id: "c1", items: ["1", "2", "3"] },
-    { id: "c2", items: ["4", "5", "6"] },
-    { id: "c3", items: ["7", "8"] },
-  ]);
+export function Board({
+  boardDataPromise,
+}: {
+  boardDataPromise: ReturnType<typeof getBoardData>,
+}) {
+  const boardData = use(boardDataPromise);
+  const [items, setItems] = useState(boardData.cards);
   const [, setActive] = useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
@@ -48,8 +50,8 @@ export default function Page() {
 
     if (!activeContainer || !overContainer || activeContainer !== overContainer) return;
 
-    const activeIndex = activeContainer.items.indexOf(activeId as string);
-    const overIndex = overContainer.items.indexOf(overId as string);
+    const activeIndex = activeContainer.tasks.indexOf(activeContainer.tasks.find(t => t.id === activeId)!);
+    const overIndex = overContainer.tasks.indexOf(overContainer.tasks.find(t => t.id === overId)!);
 
     if (activeIndex === overIndex) return;
 
@@ -58,24 +60,22 @@ export default function Page() {
 
   const findContainerOf = (id: UniqueIdentifier) => {
     for (const container of items) {
-      if (container.items.includes(id as string)) return container;
+      if (container.tasks.some(p => p.id === id)) return container;
     }
     return null;
   };
 
   return (
-    <div>
-      <DndContext
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex">
-          {items.map((container) => (
-            <Container key={container.id} id={container.id} items={container.items} />
-          ))}
-        </div>
-      </DndContext>
-    </div>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex">
+        {items.map((container) => (
+          <Container key={container.id} id={container.id} items={container.tasks.map(t => t.id)} />
+        ))}
+      </div>
+    </DndContext>
   );
 }

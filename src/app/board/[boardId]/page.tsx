@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
-import { getBoardData } from "@/_data/board";
 
 
 const BoardPage = ({
@@ -39,7 +38,6 @@ const BoardName = async ({
   params: Promise<{ boardId: string }>,
 }) => {
   const boardId = (await params).boardId;
-  await getBoardData(boardId);
   const user = await getUser();
   if (!user) redirect("/join");
   const board = (await getUsersBoards(user.id)).find(b => b.boardId === boardId);
