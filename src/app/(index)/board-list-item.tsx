@@ -1,7 +1,7 @@
 "use client";
 
+import type { SelectUsersBoards } from "@/_lib/db/schema/users-boards";
 import { Button } from "@/components/ui/button";
-import type { SelectUsersBoards } from "@/_lib/db/schema";
 import { Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";

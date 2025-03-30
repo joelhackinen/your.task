@@ -6,7 +6,7 @@ if (!connectionString) throw new Error("DATABASE_URL missing from env");
 
 export default defineConfig({
   out: "./src/_lib/db/migrations",
-  schema: "./src/_lib/db/schema.ts",
+  schema: "./src/_lib/db/schema",
   dialect: "postgresql",
   casing: "snake_case",
   dbCredentials: {

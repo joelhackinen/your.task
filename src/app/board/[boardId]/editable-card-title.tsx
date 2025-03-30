@@ -1,17 +1,17 @@
 "use client";
 
-import type { CardType } from "@/_lib/db/schema";
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CheckIcon, PencilIcon, XIcon } from "lucide-react";
 import { useState, type ComponentProps } from "react";
 import { editCardTitleAction } from "./actions";
+import type { SelectCard } from "@/_lib/db/schema/cards";
 
 export const EditableCardTitle = ({
   card
 }: {
-  card: CardType
+  card: SelectCard,
 } & ComponentProps<typeof CardTitle>) => {
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(card.title);

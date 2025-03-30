@@ -1,9 +1,9 @@
-import type { CardType } from "@/_lib/db/schema";
+import type { SelectCard } from "@/_lib/db/schema/cards";
 import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
 
 interface CardsContextType {
-  cards: CardType[];
-  setCards: Dispatch<SetStateAction<CardType[]>>;
+  cards: SelectCard[];
+  setCards: Dispatch<SetStateAction<SelectCard[]>>;
 }
 
 export const CardsContext = createContext<CardsContextType | undefined>(undefined);

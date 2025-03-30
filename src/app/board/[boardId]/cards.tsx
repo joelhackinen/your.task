@@ -4,7 +4,7 @@ import { AddTaskForm } from "./add-task-form";
 import { Tasks } from "./tasks";
 import { cn } from "@/_lib/utils";
 import { getCards } from "@/_data/board";
-import { CardsContextProvider } from "./cards-provide";
+import { CardsContextProvider } from "./cards-provider";
 import { CreateCardButton } from "./create-card-button";
 import { EditableCardTitle } from "./editable-card-title";
 

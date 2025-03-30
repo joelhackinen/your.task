@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import type { CardType } from "@/_lib/db/schema";
 import { useActionState, useEffect } from "react";
 import { addTaskAction } from "./actions";
 import {
@@ -21,13 +20,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { InputErrors } from "@/components/input-errors";
 import { SubmitButton } from "@/components/submit-button";
+import type { SelectCard } from "@/_lib/db/schema/cards";
 
 
 export const AddTaskForm = ({
   cards,
   cardId,
 }: {
-  cards: CardType[],
+  cards: SelectCard[],
   cardId: string,
 }) => {
   const [state, addTask] = useActionState(addTaskAction, undefined);

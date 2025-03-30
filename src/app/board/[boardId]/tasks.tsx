@@ -1,12 +1,13 @@
-import { type CardType, type TaskType } from "@/_lib/db/schema";
 import { Suspense } from "react";
 import { Task } from "./task";
 import { getTasks } from "@/_data/board";
+import type { SelectCard } from "@/_lib/db/schema/cards";
+import type { SelectTask } from "@/_lib/db/schema/tasks";
 
 export const Tasks = async ({
   card,
 }: {
-  card: CardType,
+  card: SelectCard,
 }) => {
   const tasks = await getTasks(card.id);
   return (
@@ -19,7 +20,7 @@ export const Tasks = async ({
 const TaskList = ({
   tasks
 }: {
-  tasks: TaskType[],
+  tasks: SelectTask[],
 }) => (
     <ul>
       {tasks.map((t) => (

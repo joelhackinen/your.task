@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { TaskType } from "@/_lib/db/schema";
 import { Ellipsis, Trash } from "lucide-react";
 import {
   DropdownMenu,
@@ -19,11 +18,12 @@ import { cn } from "@/_lib/utils";
 import { deleteTaskAction, moveCardAction } from "./actions";
 import { CardsContext } from "./cards-context";
 import { use } from "react";
+import type { SelectTask } from "@/_lib/db/schema/tasks";
 
 export const Task = ({
   task,
 }: {
-  task: TaskType
+  task: SelectTask,
 }) => {
   const cards = use(CardsContext);
 

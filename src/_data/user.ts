@@ -6,10 +6,9 @@ import { cache } from "react";
 
 export const getUser = cache(async () => {
   const session = await verifySession();
-
   if (!session?.userId) return;
 
-  const data = await db
+  const [user] = await db
     .select({
       id: users.id,
       username: users.username
@@ -17,7 +16,6 @@ export const getUser = cache(async () => {
     .from(users)
     .where(eq(users.id, session.userId));
 
-  const user = data[0];
   return user;
 });
 
